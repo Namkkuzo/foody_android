@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.foody.Model.User;
 import com.huawei.agconnect.auth.AGConnectAuth;
 import com.huawei.agconnect.auth.AGConnectAuthCredential;
+import com.huawei.agconnect.auth.AGConnectUser;
 import com.huawei.agconnect.auth.EmailAuthProvider;
 import com.huawei.agconnect.auth.SignInResult;
 import com.huawei.hmf.tasks.OnFailureListener;
@@ -29,9 +30,16 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getSupportActionBar().hide();
+        AGConnectUser user = AGConnectAuth.getInstance().getCurrentUser();
+        if (user!=null){
+            Intent main = new Intent(LoginActivity.this, MainActivity.class);
+            main.putExtra("UserId", user.getUid());
+            startActivity(main);
+            finish();
+        }
         getView();
         listenClick();
+        getData();
 
     }
 
@@ -40,6 +48,15 @@ public class LoginActivity extends AppCompatActivity {
         txtPassword = findViewById(R.id.editTextPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnGoToRegister);
+    }
+    void getData(){
+        Intent result  = getIntent();
+        if (result.hasExtra("Pass")){
+            txtPassword.setText(result.getStringExtra("Pass"));
+        }
+        if (result.hasExtra("Email")){
+            txtEmail.setText(result.getStringExtra("Email"));
+        }
     }
 
     void listenClick() {
@@ -66,19 +83,9 @@ public class LoginActivity extends AppCompatActivity {
                     validate = false;
                 } else txtPassword.setError(null);
                 if (validate) {
-//                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<AuthResult> task) {
-//                            if (task.isSuccessful()) {
-//                                Intent openmain = new Intent(getApplicationContext(), MainActivity.class);
-//                                openmain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                startActivity(openmain);
-//                                finish();
-//                            } else
-//                                Toast.makeText(getApplicationContext(), "Error!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-//                        }
-//
-//                    });
+                    Log.e("LoginActivity", "email : " + txtEmail.getText().toString().trim());
+                    Log.e("LoginActivity", "pass : " + txtPassword.getText().toString().trim());
+                    login(txtEmail.getText().toString().trim(), txtPassword.getText().toString().trim());
                 }
             }
         });
@@ -86,10 +93,17 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login(String email, String password) {
         AGConnectAuthCredential credential = EmailAuthProvider.credentialWithPassword(email, password);
-        AGConnectAuth.getInstance().signIn(credential)
-                .addOnSuccessListener(signInResult -> {
-                    getUser(signInResult.getUser().getUid());
 
+        AGConnectAuth.getInstance().signIn(credential)
+                .addOnSuccessListener(new OnSuccessListener<SignInResult>() {
+                    @Override
+                    public void onSuccess(SignInResult signInResult) {
+                        // Obtain sign-in information.
+                        Intent main = new Intent(LoginActivity.this, MainActivity.class);
+                        main.putExtra("UserId", signInResult.getUser().getUid());
+                        startActivity(main);
+                        finish();
+                    }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -97,9 +111,6 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("LoginActivity", "Error Huawei: " + e.getMessage());
                     }
                 });
-    }
-    User getUser (String id){
-        return new User();
     }
 
 }

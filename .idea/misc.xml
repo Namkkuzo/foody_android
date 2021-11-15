@@ -16,6 +16,12 @@
         <entry key="..\:/Foody/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.17395833333333333" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/circle.xml" value="0.22135416666666666" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/grid_horizontal.xml" value="0.22135416666666666" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/activity_login.xml" value="0.17864583333333334" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/fragment_favorite.xml" value="0.1796875" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/fragment_recipe.xml" value="0.20520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/menu/menu.xml" value="0.2" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/menu/menu_favorite.xml" value="0.20520833333333333" />
       </map>
     </option>
   </component>
