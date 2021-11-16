@@ -2,11 +2,13 @@ package com.example.foody.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import com.example.foody.R;
 import com.example.foody.fragment.FavoriteFragment;
 import com.example.foody.fragment.RecipeFragment;
 import com.example.foody.helper.Contain;
+import com.example.foody.model.Recipe;
 import com.example.foody.model.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.huawei.agconnect.auth.AGConnectAuth;
+import com.huawei.agconnect.auth.AGConnectUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,30 +38,34 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCompat.requestPermissions(this, permissions, 1);
         setContentView(R.layout.activity_main);
+        user = new User();
         mapview();
         getUser();
     }
+    private String[] permissions = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+    };
 
 
-    void getListRecipe(){
-
-    }
 
     void  getUser (){
-        Intent result = getIntent();
-        String idUser = "";
-        if (result.hasExtra("UserId")){
-            idUser = result.getStringExtra("UserId");
-        }
-        DatabaseReference profile = mReference.child("User").child(idUser).child("Profile");
-        user.id =  idUser;
+
+        AGConnectUser currentUser = AGConnectAuth.getInstance().getCurrentUser();
+        String userId = currentUser.getUid();
+        user.id = userId;
+        DatabaseReference profile = mReference.child("User").child(userId).child("Profile");
         profile.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user.userName =  dataSnapshot.child("UserName").getValue().toString();
-                user.email =  dataSnapshot.child("E-mail").getValue().toString();
-                user.picture =  dataSnapshot.child("Picture").getValue().toString();
+                user.email =  currentUser.getEmail();
+                if (dataSnapshot.child("ImageName").exists())
+                user.imageName =  dataSnapshot.child("ImageName").getValue().toString();
+                if (dataSnapshot.child("ImageType").exists())
+                user.imageType =  dataSnapshot.child("ImageType").getValue().toString();
                 Log.e("MainActivity", "get user success");
             }
 

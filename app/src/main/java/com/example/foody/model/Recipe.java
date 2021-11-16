@@ -6,7 +6,7 @@ public class Recipe {
     public String id ;
     public String title;
     public String summary;
-    public String totalLike;
-    public String totalTime;
+    public int totalLike;
+    public int totalTime;
     public boolean vegan;
 }
