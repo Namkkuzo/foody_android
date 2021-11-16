@@ -83,13 +83,13 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Boolean result = register(txtUsername.getText().toString().trim(), txtEmail.getText().toString().trim(), txtCode.getText().toString().trim(), txtPassword.getText().toString().trim(), txtRepass.getText().toString().trim());
-
+                Toast.makeText(Register.this, result.toString(), Toast.LENGTH_LONG).show();
                 if (result){
                     AGConnectAuth.getInstance().signOut();
-                    Intent register = new Intent(Register.this, LoginActivity.class);
-                    register.putExtra("Pass", txtPassword.getText().toString().trim());
-                    register.putExtra("Email",txtEmail.getText().toString().trim() );
-                    startActivity(register);
+                    Intent login = new Intent(Register.this, LoginActivity.class);
+                    login.putExtra("Pass", txtPassword.getText().toString().trim());
+                    login.putExtra("Email",txtEmail.getText().toString().trim() );
+                    startActivity(login);
                     finish();
                 }
             }
@@ -128,11 +128,29 @@ public class Register extends AppCompatActivity {
                         final String TAG = "Register";
                         Log.e(TAG, userId);
                         // After an account is created, the user has signed in by default.
-                        saveUserToFirebase(username, email, userId);
+
+                        HashMap<String, String> newUser = new HashMap<>();
+                        newUser.put("ID", userId);
+                        newUser.put("UserName", username);
+                        newUser.put("Picture", "default");
+                        newUser.put("Email", email);
+                        mReference.child("User").child(userId).child("Profile").setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                                Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
+                                newActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(newActivity);
+                                finish();
+                            }
+                        }).addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("Register",e.getMessage());
+                            }
+                        });
                         result = true;
                     })
                     .addOnFailureListener(new OnFailureListener() {
-
                         @Override
                         public void onFailure(Exception e) {
                             Toast.makeText(Register.this, "Có lỗi xảy ra!" + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -160,9 +178,15 @@ public class Register extends AppCompatActivity {
                 Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
                 newActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(newActivity);
+                finish();
+            }
+        }).addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Register",e.getMessage());
             }
         });
-        finish();
+
     }
 
 

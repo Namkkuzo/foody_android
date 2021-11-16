@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getSupportActionBar().hide();
         AGConnectUser user = AGConnectAuth.getInstance().getCurrentUser();
         if (user!=null){
             Intent main = new Intent(LoginActivity.this, MainActivity.class);
@@ -83,8 +84,6 @@ public class LoginActivity extends AppCompatActivity {
                     validate = false;
                 } else txtPassword.setError(null);
                 if (validate) {
-                    Log.e("LoginActivity", "email : " + txtEmail.getText().toString().trim());
-                    Log.e("LoginActivity", "pass : " + txtPassword.getText().toString().trim());
                     login(txtEmail.getText().toString().trim(), txtPassword.getText().toString().trim());
                 }
             }
@@ -108,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(Exception e) {
-                        Log.e("LoginActivity", "Error Huawei: " + e.getMessage());
+                        Toast.makeText(LoginActivity.this ,e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
     }

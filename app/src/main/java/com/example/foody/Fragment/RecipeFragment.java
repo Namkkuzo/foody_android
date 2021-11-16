@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,8 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.foody.LoginActivity;
+import com.example.foody.Model.Recipe;
 import com.example.foody.R;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.huawei.agconnect.auth.AGConnectAuth;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,6 +41,13 @@ public class RecipeFragment extends Fragment {
     public RecipeFragment() {
         // Required empty public constructor
     }
+
+    View view;
+    private RecyclerView recyclerView;
+    //private ChatAdapter chatAdapter;
+    private List<Recipe> listRecipe;
+    FirebaseUser firebaseUser;
+    DatabaseReference databaseReference;
 
     /**
      * Use this factory method to create a new instance of
@@ -93,4 +106,7 @@ public class RecipeFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_recipe, container, false);
     }
+
+
+    private void readChat(){}
 }
