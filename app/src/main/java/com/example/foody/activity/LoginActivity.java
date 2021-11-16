@@ -1,17 +1,15 @@
-package com.example.foody;
+package com.example.foody.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.foody.Model.User;
+import com.example.foody.R;
 import com.huawei.agconnect.auth.AGConnectAuth;
 import com.huawei.agconnect.auth.AGConnectAuthCredential;
 import com.huawei.agconnect.auth.AGConnectUser;
@@ -30,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getSupportActionBar().hide();
         AGConnectUser user = AGConnectAuth.getInstance().getCurrentUser();
         if (user!=null){
             Intent main = new Intent(LoginActivity.this, MainActivity.class);
@@ -83,8 +82,6 @@ public class LoginActivity extends AppCompatActivity {
                     validate = false;
                 } else txtPassword.setError(null);
                 if (validate) {
-                    Log.e("LoginActivity", "email : " + txtEmail.getText().toString().trim());
-                    Log.e("LoginActivity", "pass : " + txtPassword.getText().toString().trim());
                     login(txtEmail.getText().toString().trim(), txtPassword.getText().toString().trim());
                 }
             }
@@ -108,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(Exception e) {
-                        Log.e("LoginActivity", "Error Huawei: " + e.getMessage());
+                        Toast.makeText(LoginActivity.this ,e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
     }
