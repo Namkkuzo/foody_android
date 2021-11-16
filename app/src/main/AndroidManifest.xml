@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- write permission for save QRCODE Bitmap,not for scankit itself -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -22,6 +23,9 @@
         android:theme="@style/Theme.Foody">
         <activity
             android:name=".activity.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.TestAPI"
             android:exported="false" />
         <activity
             android:name=".activity.Register"
