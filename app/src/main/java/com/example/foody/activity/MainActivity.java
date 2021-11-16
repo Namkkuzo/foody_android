@@ -1,8 +1,6 @@
-package com.example.foody;
+package com.example.foody.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -10,16 +8,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
-import com.example.foody.Fragment.FavoriteFragment;
-import com.example.foody.Fragment.RecipeFragment;
-import com.example.foody.Model.User;
+import com.example.foody.R;
+import com.example.foody.fragment.FavoriteFragment;
+import com.example.foody.fragment.RecipeFragment;
+import com.example.foody.model.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.huawei.agconnect.auth.AGConnectAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,12 +29,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mapview();
-        user = getUser("");
+        getUser();
     }
 
 
-    User getUser (String id){
-        return new User();
+
+    void  getUser (){
+        Intent result = getIntent();
+        String idUser = "";
+        if (result.hasExtra("UserId")){
+            idUser = result.getStringExtra("UserId");
+        }
+
+
     }
 
 

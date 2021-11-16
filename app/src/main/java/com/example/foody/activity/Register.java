@@ -1,4 +1,4 @@
-package com.example.foody;
+package com.example.foody.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,12 +11,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.foody.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.huawei.agconnect.auth.AGConnectAuth;
 import com.huawei.agconnect.auth.EmailUser;
-import com.huawei.agconnect.auth.SignInResult;
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.agconnect.auth.VerifyCodeSettings;
 import com.huawei.agconnect.auth.VerifyCodeResult;
@@ -36,8 +36,7 @@ public class Register extends AppCompatActivity {
     EditText txtRepass;
     EditText txtCode;
     EditText txtUsername;
-    private FirebaseDatabase  mReference;
-    boolean result = false;
+    DatabaseReference   mReference;
 
 
     @Override
@@ -46,7 +45,7 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getSupportActionBar().hide();
         getView();
-        mReference = FirebaseDatabase.getInstance();
+        mReference = FirebaseDatabase.getInstance("https://foodyandroidnangcao-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
         listenViewOnclick();
 
     }
@@ -82,22 +81,14 @@ public class Register extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Boolean result = register(txtUsername.getText().toString().trim(), txtEmail.getText().toString().trim(), txtCode.getText().toString().trim(), txtPassword.getText().toString().trim(), txtRepass.getText().toString().trim());
-                Toast.makeText(Register.this, result.toString(), Toast.LENGTH_LONG).show();
-                if (result){
-                    AGConnectAuth.getInstance().signOut();
-                    Intent login = new Intent(Register.this, LoginActivity.class);
-                    login.putExtra("Pass", txtPassword.getText().toString().trim());
-                    login.putExtra("Email",txtEmail.getText().toString().trim() );
-                    startActivity(login);
-                    finish();
-                }
+                register(txtUsername.getText().toString().trim(), txtEmail.getText().toString().trim(), txtCode.getText().toString().trim(), txtPassword.getText().toString().trim(), txtRepass.getText().toString().trim());
+//                Toast.makeText(Register.this, result.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
 
-    public Boolean register(String username, String email, String verify, String password, String rePassword) {
+    public void register(String username, String email, String verify, String password, String rePassword) {
         Boolean Check = true;
         if (username.isEmpty()) {
             txtUsername.setError("Tên không được trống");
@@ -128,68 +119,22 @@ public class Register extends AppCompatActivity {
                         final String TAG = "Register";
                         Log.e(TAG, userId);
                         // After an account is created, the user has signed in by default.
+                        saveUserToFirebase(userId,username,email);
 
-                        HashMap<String, String> newUser = new HashMap<>();
-                        newUser.put("ID", userId);
-                        newUser.put("UserName", username);
-                        newUser.put("Picture", "default");
-                        newUser.put("Email", email);
-                        mReference.child("User").child(userId).child("Profile").setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
-                                Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
-                                newActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(newActivity);
-                                finish();
-                            }
-                        }).addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e("Register",e.getMessage());
-                            }
-                        });
-                        result = true;
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(Exception e) {
                             Toast.makeText(Register.this, "Có lỗi xảy ra!" + e.getMessage(), Toast.LENGTH_LONG).show();
-                            result = false;
                         }
 
                     });
-            return result;
         } else {
             Toast.makeText(Register.this, "Có lỗi xảy ra!", Toast.LENGTH_LONG).show();
-            return false;
         }
     }
 
 
-    void saveUserToFirebase(String username, String email, String userID) {
-        HashMap<String, String> newuser = new HashMap<>();
-        newuser.put("ID", userID);
-        newuser.put("UserName", username);
-        newuser.put("Picture", "default");
-        newuser.put("Email", email);
-        DatabaseReference myRef = mReference.getReference();
-        myRef.child("alo").setValue("aloooo");
-        myRef.child("User").child(userID).child("Profile").setValue(newuser).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
-                Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
-                newActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(newActivity);
-                finish();
-            }
-        }).addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("Register",e.getMessage());
-            }
-        });
-
-    }
 
 
     void getVerifyCode(String emailStr) {
@@ -209,6 +154,29 @@ public class Register extends AppCompatActivity {
             @Override
             public void onFailure(Exception e) {
                 Toast.makeText(Register.this, "Email not sent." + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    void saveUserToFirebase (String userId, String username, String email){
+        HashMap<String, String> newUser = new HashMap<>();
+        newUser.put("ID", userId);
+        newUser.put("UserName", username);
+        newUser.put("Picture", "default");
+        newUser.put("Email", email);
+        mReference.child("User").child(userId).child("Profile").setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                AGConnectAuth.getInstance().signOut();
+                Intent login = new Intent(Register.this, LoginActivity.class);
+                login.putExtra("Pass", txtPassword.getText().toString().trim());
+                login.putExtra("Email",txtEmail.getText().toString().trim() );
+                startActivity(login);
+                finish();
+            }
+        }).addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Register","error"+e.getMessage());
             }
         });
     }
