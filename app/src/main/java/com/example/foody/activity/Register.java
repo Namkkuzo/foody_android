@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.foody.R;
+import com.example.foody.helper.Contain;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,7 +46,7 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getSupportActionBar().hide();
         getView();
-        mReference = FirebaseDatabase.getInstance("https://foodyandroidnangcao-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
+        mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
         listenViewOnclick();
 
     }

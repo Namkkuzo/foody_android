@@ -16,11 +16,23 @@
         <entry key="..\:/Foody/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.17395833333333333" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/circle.xml" value="0.22135416666666666" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/grid_horizontal.xml" value="0.22135416666666666" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/ic_baseline_filter_list_24.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/ic_baseline_menu_book_24.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/ic_vegan.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/ic_vegan_active.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/logo.xml" value="0.2520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/drawable/radius.xml" value="0.2520833333333333" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/activity_login.xml" value="0.17864583333333334" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/activity_register.xml" value="0.14375" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/fragment_favorite.xml" value="0.1796875" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/fragment_recipe.xml" value="0.20520833333333333" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/layout_test.xml" value="0.2359375" />
+        <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/recipe_item_list.xml" value="0.45569620253164556" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/menu/menu.xml" value="0.2" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/menu/menu_favorite.xml" value="0.20520833333333333" />
       </map>

@@ -1,8 +1,8 @@
 package com.example.foody.model;
 
 public class User {
-    String userName;
-    String id;
-    String email;
-    String avt;
+    public String userName;
+    public String id;
+    public String email;
+    public String picture;
 }
