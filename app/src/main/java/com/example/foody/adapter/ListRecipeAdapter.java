@@ -29,11 +29,9 @@ import java.util.List;
 
 public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.ViewHolder>  implements  View.OnLongClickListener{
 
-    private Context context;
     private List<Recipe> data;
 
-    public ListRecipeAdapter(Context context, List<Recipe> recipeList) {
-        this.context = context;
+    public ListRecipeAdapter( List<Recipe> recipeList) {
         this.data = recipeList;
     }
 
@@ -45,7 +43,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
     @NonNull
     @Override
     public ListRecipeAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recipe_item_list, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipe_item_list, parent, false);
         return new ListRecipeAdapter.ViewHolder(view);
     }
 
@@ -66,10 +64,23 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
         holder.title.setText(recipe.title);
         holder.summary.setText(recipe.summary);
-        holder.favorite.setText(recipe.totalLike);
-        holder.time.setText(recipe.totalTime);
+
+        holder.favorite.setText(new Integer (recipe.totalLike).toString());
+
+        holder.time.setText(new Integer( recipe.totalTime).toString());
+
+
+
+//        holder.title.setText(recipe.title);
+//        holder.summary.setText(recipe.summary);
+//
+//        holder.favorite.setText(recipe.totalLike);
+//
+//        holder.time.setText(recipe.totalTime);
         if (recipe.vegan){
             holder.vegan.setTextColor(Color.rgb(0,200,83));
             holder.iconVegan.setImageResource(R.drawable.ic_vegan_active);
@@ -94,8 +105,8 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageRecipe, iconVegan;
-        TextView title, summary, favorite, vegan, time;
+        public ImageView imageRecipe, iconVegan;
+        public TextView title, summary, favorite, vegan, time;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
