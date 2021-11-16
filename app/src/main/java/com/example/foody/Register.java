@@ -36,7 +36,7 @@ public class Register extends AppCompatActivity {
     EditText txtRepass;
     EditText txtCode;
     EditText txtUsername;
-    private DatabaseReference mReference;
+    private FirebaseDatabase  mReference;
     boolean result = false;
 
 
@@ -46,7 +46,7 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getSupportActionBar().hide();
         getView();
-        mReference = FirebaseDatabase.getInstance().getReference();
+        mReference = FirebaseDatabase.getInstance();
         listenViewOnclick();
 
     }
@@ -154,7 +154,9 @@ public class Register extends AppCompatActivity {
         newuser.put("UserName", username);
         newuser.put("Picture", "default");
         newuser.put("Email", email);
-        mReference.child("User").child(userID).child("Profile").setValue(newuser).addOnCompleteListener(new OnCompleteListener<Void>() {
+        DatabaseReference myRef = mReference.getReference();
+        myRef.child("alo").setValue("aloooo");
+        myRef.child("User").child(userID).child("Profile").setValue(newuser).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
                 Intent newActivity = new Intent(getApplicationContext(), MainActivity.class);
