@@ -1,6 +1,9 @@
 package com.example.foody.fragment;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +22,7 @@ import android.view.ViewGroup;
 import com.example.foody.activity.LoginActivity;
 import com.example.foody.adapter.ListRecipeAdapter;
 import com.example.foody.helper.Contain;
+import com.example.foody.helper.DatabaseLocal;
 import com.example.foody.model.Recipe;
 import com.example.foody.R;
 import com.example.foody.model.User;
@@ -28,7 +33,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.huawei.agconnect.auth.AGConnectAuth;
+import com.huawei.agconnect.cloud.storage.core.AGCStorageManagement;
+import com.huawei.agconnect.cloud.storage.core.StorageReference;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,8 +78,6 @@ public class RecipeFragment extends Fragment {
                 getActivity().finish();
                 return true;
             case R.id.button_filter:
-                return true;
-            case R.id.button_search:
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -114,6 +122,25 @@ public class RecipeFragment extends Fragment {
                     recipe.summary = item.child("Summary").getValue().toString();
                     recipe.title = item.child("Title").getValue().toString();
                     recipe.vegan =(boolean) item.child("Vegan").getValue();
+                    AGCStorageManagement storageManagement = AGCStorageManagement.getInstance();
+                    StorageReference reference = storageManagement.getStorageReference("ImageRecipe/" + recipe.id+"/"+ recipe.imageName +"."+recipe.imageType);
+                    try {
+                        final File localFile = File.createTempFile(recipe.imageName,recipe.imageType);
+                        reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
+                            Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 0, byteArrayOutputStream);
+                            byte[] bytesImage = byteArrayOutputStream.toByteArray();
+                            DatabaseLocal dbHelper = new DatabaseLocal(getContext());
+                            SQLiteDatabase db = dbHelper.getWritableDatabase();
+                            DatabaseLocal.addRecipe(db,recipe,bytesImage);
+                        }).addOnFailureListener(e -> {
+                        });
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     listRecipe.add(recipe);
                 }
                 listRecipeAdapter = new ListRecipeAdapter(listRecipe);
