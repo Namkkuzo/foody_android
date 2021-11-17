@@ -5,18 +5,11 @@ public class Ingredients {
     private String imageType;
     private String name;
     private String unit;
-    private String weight;
+    private int weight;
 
     public Ingredients() {
     }
 
-    public Ingredients(String imageName, String imageType, String name, String unit, String weight) {
-        this.imageName = imageName;
-        this.imageType = imageType;
-        this.name = name;
-        this.unit = unit;
-        this.weight = weight;
-    }
 
     public String getImageName() {
         return imageName;
@@ -50,11 +43,11 @@ public class Ingredients {
         this.unit = unit;
     }
 
-    public String getWeight() {
+    public int getWeight() {
         return weight;
     }
 
-    public void setWeight(String weight) {
+    public void setWeight(int weight) {
         this.weight = weight;
     }
 }

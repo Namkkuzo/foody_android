@@ -14,11 +14,20 @@ public class RecipeDetail {
     private String imageType;
     private List<Process> processList;
     private List<Ingredients> ingredientsList;
+    private String recipeId;
     private String summary;
     private String title;
-    private String totalTime;
+    private int totalTime;
     private boolean vegan;
     private boolean vegetarian;
+
+    public String getRecipeId() {
+        return recipeId;
+    }
+
+    public void setRecipeId(String recipeId) {
+        this.recipeId = recipeId;
+    }
 
     public RecipeDetail() {
     }
@@ -119,11 +128,11 @@ public class RecipeDetail {
         this.title = title;
     }
 
-    public String getTotalTime() {
+    public int getTotalTime() {
         return totalTime;
     }
 
-    public void setTotalTime(String totalTime) {
+    public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
     }
 
@@ -143,21 +152,4 @@ public class RecipeDetail {
         this.vegetarian = vegetarian;
     }
 
-    public RecipeDetail(String id, boolean cheap, boolean dairyFree, String description, boolean glutentFree, boolean healthy, String imageName, String imageType, List<Process> processList, List<Ingredients> ingredientsList, String summary, String title, String totalTime, boolean vegan, boolean vegetarian) {
-        this.id = id;
-        this.cheap = cheap;
-        this.dairyFree = dairyFree;
-        this.description = description;
-        this.glutentFree = glutentFree;
-        this.healthy = healthy;
-        this.imageName = imageName;
-        this.imageType = imageType;
-        this.processList = processList;
-        this.ingredientsList = ingredientsList;
-        this.summary = summary;
-        this.title = title;
-        this.totalTime = totalTime;
-        this.vegan = vegan;
-        this.vegetarian = vegetarian;
-    }
 }

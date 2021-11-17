@@ -37,7 +37,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 switch (position){
                     case 0: tab.setText("Overview"); break;
-                    case 1: tab.setText("Ingren"); break;
+                    case 1: tab.setText("Ingredients"); break;
                     case 2: tab.setText("Comment"); break;
                 }
             }

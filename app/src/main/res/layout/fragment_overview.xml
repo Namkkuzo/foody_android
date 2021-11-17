@@ -111,6 +111,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16dp"
@@ -118,6 +119,7 @@
                     android:textColor="@color/gray"
                     android:layout_marginTop="10dp"/>
                 <TextView
+                    android:id="@+id/btnDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
