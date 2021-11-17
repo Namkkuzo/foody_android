@@ -32,6 +32,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private ViewPager2 viewPager2;
     private Toolbar toolbar;
     private  Recipe recipe ;
+    private  boolean formLocal;
     private ImageView backIcon , favoriteIcon ;
 
     @Override
@@ -39,6 +40,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
         getData();
+        formLocal = false;
         tabLayout = findViewById(R.id.tabRecipeDetail);
         viewPager2 = findViewById(R.id.viewPagerDetail);
         ViewPageAdapter adapter = new ViewPageAdapter(this);
