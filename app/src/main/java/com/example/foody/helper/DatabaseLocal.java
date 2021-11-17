@@ -134,15 +134,17 @@ public class DatabaseLocal extends SQLiteOpenHelper {
     }
 
 
-    public static void deleteRecipe (SQLiteDatabase  db , String id){
-        // Define 'where' part of query.
-        String selection = RecipeTable.ID_RECIPE + " =";
-        // Specify arguments in placeholder order.
-        String[] selectionArgs = { id };
-        // Issue SQL statement.
-        db.delete(RecipeTable.TABLE_NAME, selection, selectionArgs);
-        db.delete(RecipeInstructionTable.TABLE_NAME, selection, selectionArgs);
-        db.delete(RecipeIngredientTable.TABLE_NAME, selection, selectionArgs);
+    public static void deleteRecipe (SQLiteDatabase  db ,@Nullable String id){
+        if (id == null){
+            db.delete(RecipeTable.TABLE_NAME, null, null);
+            db.delete(RecipeInstructionTable.TABLE_NAME, null, null);
+            db.delete(RecipeIngredientTable.TABLE_NAME, null, null);
+        } else{
+            db.delete(RecipeTable.TABLE_NAME, RecipeTable.ID_RECIPE + " = '" + id+"'", null);
+            db.delete(RecipeInstructionTable.TABLE_NAME, RecipeInstructionTable.ID_RECIPE + " = '" + id+"'", null);
+            db.delete(RecipeIngredientTable.TABLE_NAME, RecipeIngredientTable.ID_RECIPE + " = '" + id+"'", null);
+        }
+
 
     }
 

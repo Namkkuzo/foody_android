@@ -3,12 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Documents/Android/Foody/app/src/main/res/drawable/button_filter.xml" value="0.196875" />
         <entry key="..\:/Documents/Android/Foody/app/src/main/res/drawable/circle.xml" value="0.19479166666666667" />
         <entry key="..\:/Documents/Android/Foody/app/src/main/res/drawable/grid_horizontal.xml" value="0.2234375" />
+        <entry key="..\:/Documents/Android/Foody/app/src/main/res/drawable/ic_baseline_menu_book_24.xml" value="0.18385416666666668" />
         <entry key="..\:/Documents/Android/Foody/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.2234375" />
         <entry key="..\:/Documents/Android/Foody/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Documents/Android/Foody/app/src/main/res/layout/activity_register.xml" value="0.264" />
+        <entry key="..\:/Documents/Android/Foody/app/src/main/res/layout/filter.xml" value="0.4" />
         <entry key="..\:/Documents/Android/Foody/app/src/main/res/layout/fragment_favorite.xml" value="0.12182971014492754" />
+        <entry key="..\:/Documents/Android/Foody/app/src/main/res/layout/recipe_item_list.xml" value="0.2" />
         <entry key="..\:/Documents/Android/Foody/app/src/main/res/menu/menu_recipe.xml" value="0.1421875" />
         <entry key="..\:/Foody/app/src/main/res/drawable/circle.xml" value="0.2703125" />
         <entry key="..\:/Foody/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2703125" />
