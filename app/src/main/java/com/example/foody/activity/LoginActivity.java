@@ -36,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(main);
             finish();
         }
+
+
         getView();
         listenClick();
         getData();
@@ -62,10 +64,14 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent register = new Intent(LoginActivity.this, Register.class);
+                Intent register = new Intent(LoginActivity.this, RecipeDetailActivity.class);
                 register.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(register);
                 finish();
+//                Intent register = new Intent(LoginActivity.this, Register.class);
+//                register.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                startActivity(register);
+//                finish();
             }
         });
         btnLogin.setOnClickListener(new View.OnClickListener() {
