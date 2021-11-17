@@ -27,10 +27,10 @@ public class ViewPageAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position){
-            case 0: return new OverviewFragment();
-            case 1: return new IngredientFragment();
+            case 0: return new OverviewFragment(recipe.id);
+            case 1: return new IngredientFragment(recipe.id);
             case 2: return new CommentFragment(recipe);
-            default: return new OverviewFragment();
+            default: return new OverviewFragment(recipe.id);
         }
     }
 
