@@ -110,7 +110,7 @@ public class FavoriteFragment extends Fragment {
         DatabaseLocal dbHelper = new DatabaseLocal(getContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         listRecipe =  DatabaseLocal.getListRecipe(db);
-        listRecipeAdapter = new ListRecipeAdapter(listRecipe,ListRecipeAdapter.LIST_FAVORITE);
+        listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_FAVORITE);
         recyclerView.setAdapter(listRecipeAdapter);
     }
 }

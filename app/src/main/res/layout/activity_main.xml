@@ -8,6 +8,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/appbar">
 
@@ -16,6 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/main_tablayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:background="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent">
     </com.google.android.material.tabs.TabLayout>

@@ -1,6 +1,7 @@
 package com.example.foody.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.foody.R;
+import com.example.foody.adapter.ListRecipeAdapter;
 import com.example.foody.fragment.FavoriteFragment;
 import com.example.foody.fragment.RecipeFragment;
 import com.example.foody.helper.Contain;
@@ -29,6 +31,8 @@ import com.huawei.agconnect.auth.AGConnectAuth;
 import com.huawei.agconnect.auth.AGConnectUser;
 
 public class MainActivity extends AppCompatActivity {
+
+
 
     ViewPager viewPager;
     TabLayout tabLayout;
@@ -50,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Contain.LIST_RECIPE){
+            Log.e("resultActivityPop", Integer.toString(resultCode));
+        }
+        if(requestCode == Contain.LIST_FAVORITE){
+            Log.e("resultActivityPop", Integer.toString(resultCode));
+        }
+    }
 
     void  getUser (){
 
