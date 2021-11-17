@@ -43,7 +43,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         formLocal = false;
         tabLayout = findViewById(R.id.tabRecipeDetail);
         viewPager2 = findViewById(R.id.viewPagerDetail);
-        ViewPageAdapter adapter = new ViewPageAdapter(this, recipe.id);
+        ViewPageAdapter adapter = new ViewPageAdapter(this, recipe);
         viewPager2.setAdapter(adapter);
 
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -51,7 +51,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 switch (position){
                     case 0: tab.setText("Overview"); break;
-                    case 1: tab.setText("Ingredients"); break;
+                    case 1: tab.setText("Ingren"); break;
                     case 2: tab.setText("Comment"); break;
                 }
             }

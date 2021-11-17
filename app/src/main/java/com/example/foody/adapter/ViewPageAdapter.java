@@ -10,26 +10,27 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.foody.fragment.CommentFragment;
 import com.example.foody.fragment.IngredientFragment;
 import com.example.foody.fragment.OverviewFragment;
+import com.example.foody.model.Recipe;
 
 import java.util.ArrayList;
 
 public class ViewPageAdapter extends FragmentStateAdapter {
 
-    private String recipeId;
+    Recipe recipe;
 
-    public ViewPageAdapter(@NonNull FragmentActivity fragmentActivity, String reciId) {
+    public ViewPageAdapter(@NonNull FragmentActivity fragmentActivity, Recipe recipe) {
         super(fragmentActivity);
-        this.recipeId = reciId;
+        this.recipe = recipe;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         switch (position){
-            case 0: return new OverviewFragment(recipeId);
-            case 1: return new IngredientFragment(recipeId);
-            case 2: return new CommentFragment();
-            default: return new OverviewFragment(recipeId);
+            case 0: return new OverviewFragment(recipe.id);
+            case 1: return new IngredientFragment(recipe.id);
+            case 2: return new CommentFragment(recipe);
+            default: return new OverviewFragment(recipe.id);
         }
     }
 

@@ -5,4 +5,7 @@ public class CommentRecipe {
     public String content;
     public String imageType;
     public String imageName;
+    public  CommentRecipe(){
+        author = new User();
+    }
 }
