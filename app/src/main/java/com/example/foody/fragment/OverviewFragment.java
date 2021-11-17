@@ -103,7 +103,7 @@ public class OverviewFragment extends Fragment {
                                 for (DataSnapshot itemProcess : snapshot.getChildren()){
                                     Process process = new Process();
                                     process.setAction(itemProcess.child("Action").getValue().toString());
-                                    process.setStep(Integer.parseInt(itemProcess.child("Step").toString()));
+                                    process.setStep(Integer.parseInt(itemProcess.child("Step").getValue().toString()));
                                     processList.add(process);
                                 }
                                 recipeDetail.setProcessList(processList);
