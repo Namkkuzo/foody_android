@@ -35,6 +35,28 @@
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/layout/recipe_item_list.xml" value="0.45569620253164556" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/menu/menu.xml" value="0.2" />
         <entry key="..\:/NamLV/Project/androiNangcao/foody/app/src/main/res/menu/menu_favorite.xml" value="0.20520833333333333" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/drawable/ic_baseline_access_time_24.xml" value="0.2703125" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.16979166666666667" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/drawable/ic_baseline_filter_list_24.xml" value="0.2703125" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/drawable/ic_baseline_menu_book_24.xml" value="0.2703125" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2703125" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.2703125" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.2703125" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/drawable/logo.xml" value="0.16979166666666667" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/activity_login.xml" value="0.12771739130434784" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/activity_main.xml" value="0.12360688956433637" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/activity_recipe_detail.xml" value="0.176" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/activity_register.xml" value="0.25416666666666665" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/fragment_comment.xml" value="0.13020833333333334" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/fragment_favorite.xml" value="0.12360688956433637" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/fragment_ingredient.xml" value="0.12771739130434784" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/fragment_overview.xml" value="0.2" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/fragment_recipe.xml" value="0.12360688956433637" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/fragment_recipe_detail.xml" value="0.13020833333333334" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/igredients_item_list.xml" value="0.15364583333333334" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/recipe_detail.xml" value="0.1109375" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/layout/recipe_item_list.xml" value="0.25416666666666665" />
+        <entry key="..\:/UNIVERSITY/Android Advance/BTL/foody_android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.16979166666666667" />
       </map>
     </option>
   </component>
