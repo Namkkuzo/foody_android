@@ -61,6 +61,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
             }).addOnFailureListener(e -> {
                 Log.e("ListRecipeAdapter","get image "+ position + "fail");
             });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,12 +76,6 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
 
 
 
-//        holder.title.setText(recipe.title);
-//        holder.summary.setText(recipe.summary);
-//
-//        holder.favorite.setText(recipe.totalLike);
-//
-//        holder.time.setText(recipe.totalTime);
         if (recipe.vegan){
             holder.vegan.setTextColor(Color.rgb(0,200,83));
             holder.iconVegan.setImageResource(R.drawable.ic_vegan_active);
