@@ -15,21 +15,21 @@ import java.util.ArrayList;
 
 public class ViewPageAdapter extends FragmentStateAdapter {
 
+    private String recipeId;
 
-
-
-    public ViewPageAdapter(@NonNull FragmentActivity fragmentActivity) {
+    public ViewPageAdapter(@NonNull FragmentActivity fragmentActivity, String reciId) {
         super(fragmentActivity);
+        this.recipeId = reciId;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         switch (position){
-            case 0: return new OverviewFragment();
-            case 1: return new IngredientFragment();
+            case 0: return new OverviewFragment(recipeId);
+            case 1: return new IngredientFragment(recipeId);
             case 2: return new CommentFragment();
-            default: return new OverviewFragment();
+            default: return new OverviewFragment(recipeId);
         }
     }
 
