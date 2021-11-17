@@ -155,7 +155,7 @@ public class RecipeFragment extends Fragment {
 
                     listRecipe.add(recipe);
                 }
-                listRecipeAdapter = new ListRecipeAdapter(listRecipe,ListRecipeAdapter.LIST_RECIPE);
+                listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_RECIPE);
                 recyclerView.setAdapter(listRecipeAdapter);
             }
 

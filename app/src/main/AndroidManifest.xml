@@ -30,6 +30,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Foody">
         <activity
+            android:parentActivityName=".activity.MainActivity"
             android:name=".activity.RecipeDetailActivity"
             android:exported="true" />
         <activity
