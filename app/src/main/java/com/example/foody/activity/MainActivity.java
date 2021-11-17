@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     void mapview (){
         viewPager = findViewById(R.id.Main_viewpager);
         tabLayout = findViewById(R.id.main_tablayout);
