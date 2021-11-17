@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.foody.R;
@@ -29,10 +30,15 @@ public class OverviewFragment extends Fragment {
 
     View view;
     DatabaseReference mReference;
-    TextView btnDescription;
+    TextView tvDescription;
+    TextView tvProcess;
+    RadioButton rdCheap,rdDairyFree, rdGlutent, rdHeathy, rdVegan, rdVegetarian;
 
-    public OverviewFragment() {
+    private String recipeId;
+
+    public OverviewFragment(String recipeId) {
         // Required empty public constructor
+        this.recipeId = recipeId;
     }
 
 
@@ -56,7 +62,7 @@ public class OverviewFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_overview, container, false);
         mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
-        getRecipeDetailByReID("test1");
+        getRecipeDetailByReID(recipeId);
 
 
         return view;
@@ -99,13 +105,19 @@ public class OverviewFragment extends Fragment {
                         mProcess.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                String str ="";
+
                                 List<Process> processList = new ArrayList<>();
                                 for (DataSnapshot itemProcess : snapshot.getChildren()){
                                     Process process = new Process();
                                     process.setAction(itemProcess.child("Action").getValue().toString());
                                     process.setStep(Integer.parseInt(itemProcess.child("Step").getValue().toString()));
                                     processList.add(process);
+
+                                    str+= "- Bước "+process.getStep()+" : "+ process.getAction() +"\n";
                                 }
+                                tvProcess = view.findViewById(R.id.tvStep);
+                                tvProcess.setText(str);
                                 recipeDetail.setProcessList(processList);
                             }
 
@@ -129,8 +141,22 @@ public class OverviewFragment extends Fragment {
                         recipeDetail.setVegan((boolean) item.child("Vegan").getValue());
                         recipeDetail.setVegetarian((boolean) item.child("Vegetarian").getValue());
 
-                        btnDescription = (TextView) view.findViewById(R.id.btnDescription);
-                        btnDescription.setText(recipeDetail.getDescription());
+                        rdCheap = view.findViewById(R.id.rdCheap);
+                        rdVegetarian = view.findViewById(R.id.rdVegetarian);
+                        rdDairyFree = view.findViewById(R.id.rdDairy);
+                        rdGlutent = view.findViewById(R.id.rdGlutentFree);
+                        rdVegan = view.findViewById(R.id.rdVegan);
+                        rdHeathy = view.findViewById(R.id.rdHealthy);
+
+                        rdCheap.setChecked(recipeDetail.isCheap());
+                        rdVegetarian.setChecked(recipeDetail.isVegetarian());
+                        rdDairyFree.setChecked(recipeDetail.isDairyFree());
+                        rdGlutent.setChecked(recipeDetail.isGlutentFree());
+                        rdVegan.setChecked(recipeDetail.isVegan());
+                        rdHeathy.setChecked(recipeDetail.isHealthy());
+
+                        tvDescription = (TextView) view.findViewById(R.id.tvDescription);
+                        tvDescription.setText(recipeDetail.getDescription());
                     }
                 }
             }

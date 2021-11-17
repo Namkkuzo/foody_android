@@ -3,16 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_200"
+    android:background="#BEEFEA"
     tools:context=".fragment.IngredientFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_ingredients"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="@color/black"
-        android:textSize="30dp"
-        android:layout_marginLeft="30dp"
-        android:text="@string/ingredient_fragment" />
+        android:layout_height="wrap_content" />
 
 </FrameLayout>

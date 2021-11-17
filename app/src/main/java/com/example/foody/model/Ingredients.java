@@ -1,15 +1,34 @@
 package com.example.foody.model;
 
+import android.graphics.Bitmap;
+
 public class Ingredients {
+    private int id;
     private String imageName;
     private String imageType;
     private String name;
     private String unit;
     private int weight;
+    public Bitmap imageBitmap;
 
     public Ingredients() {
     }
 
+    public Bitmap getImageBitmap() {
+        return imageBitmap;
+    }
+
+    public void setImageBitmap(Bitmap imageBitmap) {
+        this.imageBitmap = imageBitmap;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getImageName() {
         return imageName;
