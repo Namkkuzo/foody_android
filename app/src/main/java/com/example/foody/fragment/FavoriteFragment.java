@@ -66,6 +66,19 @@ public class FavoriteFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.delete:
+                boolean haveUpdate  = false;
+                DatabaseLocal dbHelper = new DatabaseLocal(getContext());
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                for (String  id :listRecipeAdapter.getListPicked()) {
+                    if(!id.equals("")){
+
+                        DatabaseLocal.deleteRecipe(db,id);
+                        haveUpdate = true;
+                    }
+                }
+                if (!haveUpdate) {
+                    DatabaseLocal.deleteRecipe(db,null);
+                }
                 getListRecipe();
                 return true;
         }
@@ -82,6 +95,7 @@ public class FavoriteFragment extends Fragment {
         myLayout.setStackFromEnd(true);
         recyclerView.setLayoutManager(myLayout);
         recyclerView.setHasFixedSize(true);
+        getListRecipe();
         return view;
     }
 
@@ -96,7 +110,7 @@ public class FavoriteFragment extends Fragment {
         DatabaseLocal dbHelper = new DatabaseLocal(getContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         listRecipe =  DatabaseLocal.getListRecipe(db);
-        listRecipeAdapter = new ListRecipeAdapter(listRecipe);
+        listRecipeAdapter = new ListRecipeAdapter(listRecipe,ListRecipeAdapter.LIST_FAVORITE);
         recyclerView.setAdapter(listRecipeAdapter);
     }
 }

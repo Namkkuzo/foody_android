@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.foody.activity.LoginActivity;
 import com.example.foody.adapter.ListRecipeAdapter;
@@ -26,6 +27,7 @@ import com.example.foody.helper.DatabaseLocal;
 import com.example.foody.model.Recipe;
 import com.example.foody.R;
 import com.example.foody.model.User;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -55,6 +57,8 @@ public class RecipeFragment extends Fragment {
     private RecyclerView recyclerView;
     private ListRecipeAdapter  listRecipeAdapter;
     List<Recipe> listRecipe;
+    DatabaseLocal dbHelper ;
+    SQLiteDatabase db ;
 
 
 
@@ -63,6 +67,8 @@ public class RecipeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         listRecipe = new ArrayList<Recipe> ();
+         dbHelper = new DatabaseLocal(getContext());
+         db = dbHelper.getWritableDatabase();
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -78,9 +84,33 @@ public class RecipeFragment extends Fragment {
                 getActivity().finish();
                 return true;
             case R.id.button_filter:
+                showBottomSheetDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showBottomSheetDialog() {
+
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+        bottomSheetDialog.setContentView(R.layout.filter);
+
+        LinearLayout copy = bottomSheetDialog.findViewById(R.id.copyLinearLayout);
+        LinearLayout share = bottomSheetDialog.findViewById(R.id.shareLinearLayout);
+        LinearLayout upload = bottomSheetDialog.findViewById(R.id.uploadLinearLaySout);
+        LinearLayout download = bottomSheetDialog.findViewById(R.id.download);
+        LinearLayout delete = bottomSheetDialog.findViewById(R.id.delete);
+
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getApplicationContext(), "Share is Clicked", Toast.LENGTH_LONG).show();
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        bottomSheetDialog.show();
     }
 
 
@@ -122,28 +152,10 @@ public class RecipeFragment extends Fragment {
                     recipe.summary = item.child("Summary").getValue().toString();
                     recipe.title = item.child("Title").getValue().toString();
                     recipe.vegan =(boolean) item.child("Vegan").getValue();
-                    AGCStorageManagement storageManagement = AGCStorageManagement.getInstance();
-                    StorageReference reference = storageManagement.getStorageReference("ImageRecipe/" + recipe.id+"/"+ recipe.imageName +"."+recipe.imageType);
-                    try {
-                        final File localFile = File.createTempFile(recipe.imageName,recipe.imageType);
-                        reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
-                            Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 0, byteArrayOutputStream);
-                            byte[] bytesImage = byteArrayOutputStream.toByteArray();
-                            DatabaseLocal dbHelper = new DatabaseLocal(getContext());
-                            SQLiteDatabase db = dbHelper.getWritableDatabase();
-                            DatabaseLocal.addRecipe(db,recipe,bytesImage);
-                        }).addOnFailureListener(e -> {
-                        });
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
                     listRecipe.add(recipe);
                 }
-                listRecipeAdapter = new ListRecipeAdapter(listRecipe);
+                listRecipeAdapter = new ListRecipeAdapter(listRecipe,ListRecipeAdapter.LIST_RECIPE);
                 recyclerView.setAdapter(listRecipeAdapter);
             }
 
