@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
         AGConnectUser user = AGConnectAuth.getInstance().getCurrentUser();
-        if (user!=null){
+        if (user != null) {
             Intent main = new Intent(LoginActivity.this, MainActivity.class);
             main.putExtra("UserId", user.getUid());
             startActivity(main);
@@ -50,12 +50,13 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnGoToRegister);
     }
-    void getData(){
-        Intent result  = getIntent();
-        if (result.hasExtra("Pass")){
+
+    void getData() {
+        Intent result = getIntent();
+        if (result.hasExtra("Pass")) {
             txtPassword.setText(result.getStringExtra("Pass"));
         }
-        if (result.hasExtra("Email")){
+        if (result.hasExtra("Email")) {
             txtEmail.setText(result.getStringExtra("Email"));
         }
     }
@@ -64,14 +65,11 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent register = new Intent(LoginActivity.this, RecipeDetailActivity.class);
+
+                Intent register = new Intent(LoginActivity.this, Register.class);
                 register.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(register);
                 finish();
-//                Intent register = new Intent(LoginActivity.this, Register.class);
-//                register.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                startActivity(register);
-//                finish();
             }
         });
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(Exception e) {
-                        Toast.makeText(LoginActivity.this ,e.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }

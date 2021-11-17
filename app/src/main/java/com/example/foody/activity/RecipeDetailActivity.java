@@ -43,7 +43,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         formLocal = false;
         tabLayout = findViewById(R.id.tabRecipeDetail);
         viewPager2 = findViewById(R.id.viewPagerDetail);
-        ViewPageAdapter adapter = new ViewPageAdapter(this);
+        ViewPageAdapter adapter = new ViewPageAdapter(this, recipe);
         viewPager2.setAdapter(adapter);
 
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
