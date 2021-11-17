@@ -1,6 +1,9 @@
 package com.example.foody.fragment;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,19 +11,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.foody.activity.LoginActivity;
 import com.example.foody.adapter.ListRecipeAdapter;
 import com.example.foody.helper.Contain;
+import com.example.foody.helper.DatabaseLocal;
 import com.example.foody.model.Recipe;
 import com.example.foody.R;
 import com.example.foody.model.User;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,7 +35,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.huawei.agconnect.auth.AGConnectAuth;
+import com.huawei.agconnect.cloud.storage.core.AGCStorageManagement;
+import com.huawei.agconnect.cloud.storage.core.StorageReference;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +57,8 @@ public class RecipeFragment extends Fragment {
     private RecyclerView recyclerView;
     private ListRecipeAdapter  listRecipeAdapter;
     List<Recipe> listRecipe;
+    DatabaseLocal dbHelper ;
+    SQLiteDatabase db ;
 
 
 
@@ -53,6 +67,8 @@ public class RecipeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         listRecipe = new ArrayList<Recipe> ();
+         dbHelper = new DatabaseLocal(getContext());
+         db = dbHelper.getWritableDatabase();
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -68,11 +84,33 @@ public class RecipeFragment extends Fragment {
                 getActivity().finish();
                 return true;
             case R.id.button_filter:
-                return true;
-            case R.id.button_search:
+                showBottomSheetDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showBottomSheetDialog() {
+
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+        bottomSheetDialog.setContentView(R.layout.filter);
+
+        LinearLayout copy = bottomSheetDialog.findViewById(R.id.copyLinearLayout);
+        LinearLayout share = bottomSheetDialog.findViewById(R.id.shareLinearLayout);
+        LinearLayout upload = bottomSheetDialog.findViewById(R.id.uploadLinearLaySout);
+        LinearLayout download = bottomSheetDialog.findViewById(R.id.download);
+        LinearLayout delete = bottomSheetDialog.findViewById(R.id.delete);
+
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getApplicationContext(), "Share is Clicked", Toast.LENGTH_LONG).show();
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        bottomSheetDialog.show();
     }
 
 
@@ -114,9 +152,10 @@ public class RecipeFragment extends Fragment {
                     recipe.summary = item.child("Summary").getValue().toString();
                     recipe.title = item.child("Title").getValue().toString();
                     recipe.vegan =(boolean) item.child("Vegan").getValue();
+
                     listRecipe.add(recipe);
                 }
-                listRecipeAdapter = new ListRecipeAdapter(listRecipe);
+                listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_RECIPE);
                 recyclerView.setAdapter(listRecipeAdapter);
             }
 

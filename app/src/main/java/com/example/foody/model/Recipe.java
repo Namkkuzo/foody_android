@@ -1,8 +1,11 @@
 package com.example.foody.model;
 
+import android.graphics.Bitmap;
+
 public class Recipe {
     public String imageName;
     public String imageType;
+    public Bitmap imageBitmap;
     public String id ;
     public String title;
     public String summary;

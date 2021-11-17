@@ -2,33 +2,47 @@ package com.example.foody.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.foody.R;
 import com.example.foody.adapter.ViewPageAdapter;
 import com.example.foody.fragment.CommentFragment;
 import com.example.foody.fragment.IngredientFragment;
 import com.example.foody.fragment.OverviewFragment;
+import com.example.foody.model.Recipe;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.List;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
+    private Toolbar toolbar;
+    private  Recipe recipe ;
+    private  boolean formLocal;
+    private ImageView backIcon , favoriteIcon ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
-
+        getData();
+        formLocal = false;
         tabLayout = findViewById(R.id.tabRecipeDetail);
         viewPager2 = findViewById(R.id.viewPagerDetail);
-
         ViewPageAdapter adapter = new ViewPageAdapter(this);
         viewPager2.setAdapter(adapter);
 
@@ -42,10 +56,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 }
             }
         }).attach();
-
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ic_baseline_star_24);
+        setActionbar();
 
 //        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 //            @Override
@@ -70,5 +81,58 @@ public class RecipeDetailActivity extends AppCompatActivity {
 //
 //            }
 //        });
+    }
+
+    void setActionbar(){
+        toolbar = findViewById(R.id.detailToolbar);
+        getSupportActionBar().hide();
+        backIcon = findViewById(R.id.ic_back);
+        favoriteIcon = findViewById(R.id.ic_favorite);
+
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setResult(100);
+                Log.e("Click back icon ", "100");
+                finish();
+            }
+        });
+        favoriteIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setResult(200);
+                Log.e("Click favorite icon ", "200");
+                Log.e("resultFormMainActivity", recipe.id);
+            }
+        });
+
+    }
+
+    private void onOptionsItemSelected() {
+    }
+
+    void getData(){
+        recipe = new Recipe();
+        Intent result  = getIntent();
+        if (result.hasExtra("RecipeId")){
+            Log.e("resultFormMainActivity", result.getStringExtra("RecipeId"));
+            recipe.id = result.getStringExtra("RecipeId");
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if(fragment instanceof CommentFragment) {
+                    fragment.onActivityResult(requestCode, resultCode, data);
+                }
+            }
+        }
+
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
