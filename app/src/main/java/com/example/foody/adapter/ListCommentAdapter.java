@@ -45,7 +45,7 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
         holder.author.setText(comment.author.userName);
         holder.content.setText(comment.content);
 
-        if (!comment.imageName.equals("")) {
+        if (comment.imageName != null) {
             try {
                 AGCStorageManagement storageManagement = AGCStorageManagement.getInstance();
                 StorageReference reference = storageManagement.getStorageReference("ImageRecipe/" + recipeId + "/Comment/" + comment.imageName + "." + comment.imageType);

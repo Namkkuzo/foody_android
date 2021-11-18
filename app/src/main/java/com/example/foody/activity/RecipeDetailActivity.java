@@ -21,6 +21,7 @@ import com.example.foody.fragment.CommentFragment;
 import com.example.foody.fragment.IngredientFragment;
 import com.example.foody.fragment.OverviewFragment;
 import com.example.foody.model.Recipe;
+import com.example.foody.model.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -30,9 +31,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
-    private Toolbar toolbar;
     private  Recipe recipe ;
     private  boolean formLocal;
+    User user;
     private ImageView backIcon , favoriteIcon ;
 
     @Override
@@ -43,7 +44,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         formLocal = false;
         tabLayout = findViewById(R.id.tabRecipeDetail);
         viewPager2 = findViewById(R.id.viewPagerDetail);
-        ViewPageAdapter adapter = new ViewPageAdapter(this, recipe);
+        ViewPageAdapter adapter = new ViewPageAdapter(this, recipe, user);
         viewPager2.setAdapter(adapter);
 
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -83,8 +84,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
 //        });
     }
 
+
+
+
     void setActionbar(){
-        toolbar = findViewById(R.id.detailToolbar);
         getSupportActionBar().hide();
         backIcon = findViewById(R.id.ic_back);
         favoriteIcon = findViewById(R.id.ic_favorite);
@@ -113,11 +116,25 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     void getData(){
         recipe = new Recipe();
+        user = new User();
         Intent result  = getIntent();
         if (result.hasExtra("RecipeId")){
             Log.e("resultFormMainActivity", result.getStringExtra("RecipeId"));
             recipe.id = result.getStringExtra("RecipeId");
         }
+        if (result.hasExtra("ImageType")){
+            user.imageType = result.getStringExtra("ImageType");
+        }
+        if (result.hasExtra("ImageName")){
+            user.imageName = result.getStringExtra("ImageName");
+        }
+        if (result.hasExtra("UserName")){
+            user.userName = result.getStringExtra("UserName");
+        }
+        if (result.hasExtra("UserID")){
+            user.id = result.getStringExtra("UserID");
+        }
+
     }
 
     @Override

@@ -26,6 +26,7 @@ import com.example.foody.R;
 import com.example.foody.activity.RecipeDetailActivity;
 import com.example.foody.helper.Contain;
 import com.example.foody.model.Recipe;
+import com.example.foody.model.User;
 import com.huawei.agconnect.cloud.storage.core.AGCStorageManagement;
 import com.huawei.agconnect.cloud.storage.core.StorageReference;
 
@@ -37,24 +38,24 @@ import java.util.List;
 
 public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.ViewHolder>  {
 
-//    public interface OnBindCallback {
-//        void onViewBound(ListRecipeAdapter.ViewHolder viewHolder, int position);
-//    }
+
 
     private final List<Recipe> data;
     Context mContext ;
+    User user;
     private final int type;
     List<String> picked ;
     int totalPick;
 
 
-    public ListRecipeAdapter(List<Recipe> recipeList, int type) {
+    public ListRecipeAdapter(List<Recipe> recipeList, int type, User user) {
         this.type = type;
         this.data = recipeList;
         picked = new ArrayList<>();
         for (int i = 0; i < recipeList.size(); i++) {
             picked.add("");
         }
+        this.user= user;
         totalPick = 0;
     }
 
@@ -141,6 +142,10 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
                     //go to detail in here
                     Intent detail = new Intent(view.getContext(), RecipeDetailActivity.class);
                     detail.putExtra("RecipeId", recipe.id);
+                    detail.putExtra("ImageType", user.imageType);
+                    detail.putExtra("ImageName", user.imageName);
+                    detail.putExtra("UserName", user.userName);
+                    detail.putExtra("UserID", user.id);
                     ((Activity)mContext).startActivityForResult(detail,type);
                 }
                 notifyDataSetChanged();

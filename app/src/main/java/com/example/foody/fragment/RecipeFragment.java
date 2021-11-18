@@ -48,11 +48,10 @@ import java.util.List;
 public class RecipeFragment extends Fragment {
 
 
-    public RecipeFragment() {
-        // Required empty public constructor
-    }
+
 
     View view;
+    User user ;
     DatabaseReference mReference;
     private RecyclerView recyclerView;
     private ListRecipeAdapter  listRecipeAdapter;
@@ -60,7 +59,10 @@ public class RecipeFragment extends Fragment {
     DatabaseLocal dbHelper ;
     SQLiteDatabase db ;
 
-
+    public RecipeFragment(User user) {
+        // Required empty public constructor
+        this.user = user;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -152,10 +154,9 @@ public class RecipeFragment extends Fragment {
                     recipe.summary = item.child("Summary").getValue().toString();
                     recipe.title = item.child("Title").getValue().toString();
                     recipe.vegan =(boolean) item.child("Vegan").getValue();
-
                     listRecipe.add(recipe);
                 }
-                listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_RECIPE);
+                listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_RECIPE, user);
                 recyclerView.setAdapter(listRecipeAdapter);
             }
 

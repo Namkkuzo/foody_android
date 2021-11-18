@@ -22,6 +22,7 @@ import com.example.foody.adapter.ListRecipeAdapter;
 import com.example.foody.helper.Contain;
 import com.example.foody.helper.DatabaseLocal;
 import com.example.foody.model.Recipe;
+import com.example.foody.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,16 +40,18 @@ import java.util.List;
 
 public class FavoriteFragment extends Fragment {
 
-    public FavoriteFragment() {
-        // Required empty public constructor
-    }
+
 
     View view;
     DatabaseReference mReference;
+    User user ;
     private RecyclerView recyclerView;
     private ListRecipeAdapter listRecipeAdapter;
     List<Recipe> listRecipe;
-
+    public FavoriteFragment(User user) {
+        // Required empty public constructor
+        this.user = user;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,7 +113,7 @@ public class FavoriteFragment extends Fragment {
         DatabaseLocal dbHelper = new DatabaseLocal(getContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         listRecipe =  DatabaseLocal.getListRecipe(db);
-        listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_FAVORITE);
+        listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_FAVORITE, user);
         recyclerView.setAdapter(listRecipeAdapter);
     }
 }

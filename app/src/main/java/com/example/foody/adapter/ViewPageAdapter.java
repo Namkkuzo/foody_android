@@ -11,16 +11,19 @@ import com.example.foody.fragment.CommentFragment;
 import com.example.foody.fragment.IngredientFragment;
 import com.example.foody.fragment.OverviewFragment;
 import com.example.foody.model.Recipe;
+import com.example.foody.model.User;
 
 import java.util.ArrayList;
 
 public class ViewPageAdapter extends FragmentStateAdapter {
 
     Recipe recipe;
+    User user ;
 
-    public ViewPageAdapter(@NonNull FragmentActivity fragmentActivity, Recipe recipe) {
+    public ViewPageAdapter(@NonNull FragmentActivity fragmentActivity, Recipe recipe, User user) {
         super(fragmentActivity);
         this.recipe = recipe;
+        this.user = user;
     }
 
     @NonNull
@@ -29,7 +32,7 @@ public class ViewPageAdapter extends FragmentStateAdapter {
         switch (position){
             case 0: return new OverviewFragment(recipe.id);
             case 1: return new IngredientFragment(recipe.id);
-            case 2: return new CommentFragment(recipe);
+            case 2: return new CommentFragment(recipe, user);
             default: return new OverviewFragment(recipe.id);
         }
     }
