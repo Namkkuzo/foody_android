@@ -252,11 +252,8 @@ public class CommentFragment extends Fragment {
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                }
-            }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                     newComment.setValue(hashMap);
+                    Log.e(">>>>>>>>>>>>>>>>>>>>>","succes");
                 }
             });
 

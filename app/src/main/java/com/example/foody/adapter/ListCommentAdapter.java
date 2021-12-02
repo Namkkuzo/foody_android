@@ -38,6 +38,13 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
         return new ListCommentAdapter.ViewHolder(view);
     }
 
+
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final  CommentRecipe  comment = data.get(position);
@@ -59,11 +66,10 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
                 final File localFileAvatar = File.createTempFile(comment.imageName, comment.imageType);
                 reference.getFile(localFileAvatar).addOnSuccessListener(downloadResult -> {
                     Bitmap bitmapAvatar = BitmapFactory.decodeFile(localFileAvatar.getAbsolutePath());
-                    Log.e("ListRecipeAdapter", " get image " + comment.imageName + " Success");
-
+                    Log.e("listcomment", " get image " + comment.imageName + " Success");
                     holder.image.setImageBitmap(bitmapAvatar);
                 }).addOnFailureListener(e -> {
-                    Log.e("ListRecipeAdapter", " get image " + comment.imageName + " fail");
+                    Log.e("listcomment", " get image " + comment.imageName + " fail");
                 });
 
             } catch (IOException e) {
