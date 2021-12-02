@@ -87,7 +87,7 @@ public class DatabaseLocal extends SQLiteOpenHelper {
             "CREATE TABLE " + RecipeInstructionTable.TABLE_NAME + " (" +
                     RecipeInstructionTable.ID_RECIPE + " TEXT   , " +
                     RecipeInstructionTable.COLUMN_NAME_STEP + " TEXT , " +
-                    RecipeInstructionTable.COLUMN_NAME_ACTION + "TEXT)";
+                    RecipeInstructionTable.COLUMN_NAME_ACTION + " TEXT)";
 
     private static final String SQL_DELETE_TABLE_RECIPE =
             "DROP TABLE IF EXISTS " + RecipeTable.TABLE_NAME;

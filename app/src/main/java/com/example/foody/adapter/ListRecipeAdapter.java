@@ -55,6 +55,13 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
         picked.add("");
         notifyDataSetChanged();
     }
+    public void newListData(List<Recipe> data) {
+        this.data = data;
+        for (int i= 0;i<data.size();i++){
+            picked.add("");
+        }
+        notifyDataSetChanged();
+    }
 
     public List<String> getListPicked() {
         return picked;
@@ -91,6 +98,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
                 });
 
             } catch (IOException e) {
+                Log.e("ListRecipeAdapter", "false");
                 e.printStackTrace();
             }
         } else {
@@ -130,7 +138,17 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
                 } else {
                     holder.layout.setBackgroundColor(Color.parseColor("#ffffff"));
                     picked.set(index, "");
+                    if (totalPick>0)
                     totalPick--;
+                    else {
+                        Intent detail = new Intent(view.getContext(), RecipeDetailActivity.class);
+                        detail.putExtra("RecipeId", recipe.id);
+                        detail.putExtra("ImageType", user.imageType);
+                        detail.putExtra("ImageName", user.imageName);
+                        detail.putExtra("UserName", user.userName);
+                        detail.putExtra("UserID", user.id);
+                        ((Activity) mContext).startActivityForResult(detail, type);
+                    }
                 }
             } else {
                 //go to detail in here

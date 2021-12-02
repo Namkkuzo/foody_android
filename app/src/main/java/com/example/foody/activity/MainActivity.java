@@ -13,9 +13,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.example.foody.R;
 import com.example.foody.adapter.ListRecipeAdapter;
+import com.example.foody.fragment.CommentFragment;
 import com.example.foody.fragment.FavoriteFragment;
 import com.example.foody.fragment.RecipeFragment;
 import com.example.foody.helper.Contain;
@@ -30,10 +32,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.huawei.agconnect.auth.AGConnectAuth;
 import com.huawei.agconnect.auth.AGConnectUser;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-
-
+    Boolean reloaded;
     ViewPager viewPager;
     TabLayout tabLayout;
     DatabaseReference mReference;
@@ -57,11 +60,37 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Contain.LIST_RECIPE){
-            Log.e("resultActivityPop", Integer.toString(resultCode));
-        }
-        if(requestCode == Contain.LIST_FAVORITE){
-            Log.e("resultActivityPop", Integer.toString(resultCode));
+        if(resultCode == RecipeDetailActivity.HAVE_CHANGE_DATABASE ){
+            reloaded = false;
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    List<Fragment> fragments = getSupportFragmentManager().getFragments();
+                    if (fragments != null) {
+                        for (Fragment fragment : fragments) {
+                            if(fragment instanceof FavoriteFragment) {
+                                if (!reloaded){
+                                    ((FavoriteFragment) fragment).getListRecipe();
+                                    reloaded = true;
+                                }
+                            }
+                        }
+                    }
+//                    ScreenSlidePagerAdapter screenSlidePagerAdapter =(ScreenSlidePagerAdapter) viewPager.getAdapter();
+//                    screenSlidePagerAdapter.setFavoriteFragment(new FavoriteFragment(user));
+//                    viewPager.setAdapter(screenSlidePagerAdapter);
+                }
+            });
         }
     }
 
@@ -108,22 +137,27 @@ public class MainActivity extends AppCompatActivity {
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         final int  PAGE_NUMBER = 2;
         User user ;
+        FavoriteFragment favoriteFragment ;
         public ScreenSlidePagerAdapter(FragmentManager fm, User user) {
             super(fm);
             this.user = user;
+            favoriteFragment = new FavoriteFragment(user) ;
         }
 
         @Override
         public Fragment getItem(int position) {
             if (position == 0)
             return new RecipeFragment(user);
-            else return new FavoriteFragment(user);
+            else return favoriteFragment;
         }
+
 
         @Override
         public int getCount() {
             return PAGE_NUMBER;
         }
+
+
     }
 
 }

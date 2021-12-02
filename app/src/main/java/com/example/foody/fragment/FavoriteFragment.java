@@ -31,8 +31,6 @@ import java.util.List;
 
 public class FavoriteFragment extends Fragment {
 
-
-
     View view;
     DatabaseReference mReference;
     User user ;
@@ -42,6 +40,9 @@ public class FavoriteFragment extends Fragment {
     public FavoriteFragment(User user) {
         // Required empty public constructor
         this.user = user;
+    }
+    public FavoriteFragment() {
+
     }
 
     @Override
@@ -85,7 +86,7 @@ public class FavoriteFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_favorite, container, false);
         mapview();
         LinearLayoutManager myLayout= new LinearLayoutManager(getContext());
-        myLayout.setStackFromEnd(true);
+        myLayout.setStackFromEnd(false);
         recyclerView.setLayoutManager(myLayout);
         recyclerView.setHasFixedSize(true);
         getListRecipe();
@@ -99,11 +100,12 @@ public class FavoriteFragment extends Fragment {
     }
 
 
-    void getListRecipe(){
+    public void getListRecipe(){
         DatabaseLocal dbHelper = new DatabaseLocal(getContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         listRecipe =  DatabaseLocal.getListRecipe(db);
         listRecipeAdapter = new ListRecipeAdapter(Contain.LIST_FAVORITE, user);
         recyclerView.setAdapter(listRecipeAdapter);
+        listRecipeAdapter.newListData(listRecipe);
     }
 }

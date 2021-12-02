@@ -118,7 +118,7 @@ public class RecipeFragment extends Fragment {
         view= inflater.inflate(R.layout.fragment_recipe, container, false);
         mapview();
         LinearLayoutManager myLayout= new LinearLayoutManager(getContext());
-        myLayout.setStackFromEnd(true);
+        myLayout.setStackFromEnd(false);
         recyclerView.setLayoutManager(myLayout);
         recyclerView.setHasFixedSize(true);
         listRecipeAdapter = new ListRecipeAdapter(Contain.LIST_RECIPE, user);
