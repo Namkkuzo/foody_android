@@ -34,6 +34,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private  Recipe recipe ;
     private  boolean formLocal;
     User user;
+    ViewPageAdapter adapter;
     private ImageView backIcon , favoriteIcon ;
 
     @Override
@@ -44,7 +45,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         formLocal = false;
         tabLayout = findViewById(R.id.tabRecipeDetail);
         viewPager2 = findViewById(R.id.viewPagerDetail);
-        ViewPageAdapter adapter = new ViewPageAdapter(this, recipe, user);
+        adapter = new ViewPageAdapter(this, recipe, user);
         viewPager2.setAdapter(adapter);
 
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -59,33 +60,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }).attach();
         setActionbar();
 
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                int id = tab.getId();
-//                if(id == R.id.overview){
-//                    viewPager2.setCurrentItem(0);
-//                }else if(id == R.id.ingredients){
-//                    viewPager2.setCurrentItem(1);
-//                }else if(id == R.id.comment){
-//                    viewPager2.setCurrentItem(2);
-//                }
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//        });
     }
-
-
-
 
     void setActionbar(){
         getSupportActionBar().hide();
@@ -104,6 +79,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setResult(200);
+                adapter.saveDataToDatabase();
                 Log.e("Click favorite icon ", "200");
                 Log.e("resultFormMainActivity", recipe.id);
             }

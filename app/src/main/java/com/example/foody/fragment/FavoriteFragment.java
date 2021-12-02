@@ -23,17 +23,8 @@ import com.example.foody.helper.Contain;
 import com.example.foody.helper.DatabaseLocal;
 import com.example.foody.model.Recipe;
 import com.example.foody.model.User;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.huawei.agconnect.cloud.storage.core.AGCStorageManagement;
-import com.huawei.agconnect.cloud.storage.core.StorageReference;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +79,6 @@ public class FavoriteFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -113,7 +103,7 @@ public class FavoriteFragment extends Fragment {
         DatabaseLocal dbHelper = new DatabaseLocal(getContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         listRecipe =  DatabaseLocal.getListRecipe(db);
-        listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_FAVORITE, user);
+        listRecipeAdapter = new ListRecipeAdapter(Contain.LIST_FAVORITE, user);
         recyclerView.setAdapter(listRecipeAdapter);
     }
 }

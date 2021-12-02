@@ -25,8 +25,8 @@ import com.example.foody.activity.RecipeDetailActivity;
 import com.example.foody.helper.Contain;
 import com.example.foody.model.Ingredients;
 import com.example.foody.model.Recipe;
-import com.huawei.agconnect.cloud.storage.core.AGCStorageManagement;
-import com.huawei.agconnect.cloud.storage.core.StorageReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,24 +41,12 @@ public class ListIngredientsAdapter extends RecyclerView.Adapter<ListIngredients
 
     private final List<Ingredients> data;
     Context mContext ;
-    private final int type;
-    List<String> picked ;
-    int totalPick;
-
-
-    public ListIngredientsAdapter(List<Ingredients> ingredients, int type) {
-        this.type = type;
+    String recipeId;
+    public ListIngredientsAdapter(List<Ingredients> ingredients, String id ) {
         this.data = ingredients;
-        picked = new ArrayList<>();
-        for (int i = 0; i < ingredients.size(); i++) {
-            picked.add("");
-        }
-        totalPick = 0;
+        recipeId = id;
     }
 
-    public List<String> getListPicked (){
-        return picked;
-    }
 
     @Override
     public int getItemViewType(int position) {
@@ -76,34 +64,41 @@ public class ListIngredientsAdapter extends RecyclerView.Adapter<ListIngredients
     @Override
     public void onBindViewHolder(@NonNull ListIngredientsAdapter.ViewHolder holder, int position) {
         final Ingredients ingredients = data.get(position);
-        AGCStorageManagement storageManagement = AGCStorageManagement.getInstance();
-        StorageReference reference = storageManagement.getStorageReference("ImageRecipe/" + ingredients.getName() + "/" + ingredients.getImageName() + "." + ingredients.getImageType());
-        if (type == Contain.LIST_INGREDIENTS) {
-            try {
-                final File localFile = File.createTempFile(ingredients.getImageName(), ingredients.getImageType());
-                reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
-                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                    Log.e("ListRecipeAdapter", " get image " + position + "Success");
-                    holder.imageIngredients.setImageBitmap(bitmap);
-                }).addOnFailureListener(e -> {
-                    Log.e("ListRecipeAdapter", " get image " + position + "fail");
-                });
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//        StorageReference storageReference = storage.getReference();
+//        StorageReference reference = storageReference.child("ImageRecipe/" + recipeId + "/Ingredients/"+ingredients.getId() + ingredients.getImageName() + "." + ingredients.getImageType());
+//        try {
+//            final File localFile = File.createTempFile(ingredients.getImageName(), ingredients.getImageType());
+//            reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
+//                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+//                ingredients.setImageBitmap(bitmap);
+//                listIngredientsAdapter.notifyDataSetChanged();
+//            }).addOnFailureListener(e -> {
+//                Log.e("ListRecipeAdapter", " get image  fail");
+//            });
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            holder.imageIngredients.setImageBitmap(ingredients.getImageBitmap());
-        }
 
-        if(picked.get(position).equals(ingredients.getId())){
-            holder.layout.setBackgroundColor(Color.parseColor("#efe8ff"));
-        }
-        else
-        {
-            holder.layout.setBackgroundColor(Color.parseColor("#ffffff"));
-        }
 
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+        StorageReference reference = storageReference.child("ImageRecipe/" + recipeId + "/Ingredients/"+ ingredients.getImageName() + "." + ingredients.getImageType());
+        try {
+            final File localFile = File.createTempFile(ingredients.getImageName(), ingredients.getImageType());
+            reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
+                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                Log.e("ListRecipeAdapter", " get image " + position + "Success");
+                holder.imageIngredients.setImageBitmap(bitmap);
+            }).addOnFailureListener(e -> {
+                Log.e("ListRecipeAdapter", " get image " + position + "fail");
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         holder.title.setText(ingredients.getName());
         holder.weight.setText(ingredients.getWeight()+ingredients.getUnit());
@@ -166,7 +161,6 @@ public class ListIngredientsAdapter extends RecyclerView.Adapter<ListIngredients
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageIngredients = itemView.findViewById(R.id.image_list_ingredients);
-
             layout = itemView.findViewById(R.id.item_ingre);
             title = itemView.findViewById(R.id.title_ingredients);
             weight = itemView.findViewById(R.id.weight_ingre);

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingEnd="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <ImageView
         android:layout_width="30dp"
@@ -15,7 +16,7 @@
         android:layout_marginLeft="10dp"
         app:layout_constraintStart_toEndOf="@id/item_avatar_comment"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="15dp"
+        android:padding ="8dp"
         android:background="@drawable/comment"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/container_comment"
@@ -27,18 +28,18 @@
             android:textColor="@color/black"
             android:textSize="13sp"
             android:id="@+id/item_user_name_comment"
-            android:layout_marginBottom="10dp"
             android:textFontWeight="900"
             android:layout_height="wrap_content"
             android:text="uset1 "/>
         <TextView
             android:layout_width="match_parent"
             android:textColor="@color/black"
+            android:layout_marginTop="8dp"
             android:textSize="12sp"
+            android:visibility="visible"
             android:id="@+id/item_content_comment"
             android:textFontWeight="100"
-            android:layout_height="wrap_content"
-            android:text="sdfsdfsdf dsfsdi fsidf sdifhsdi fhisdf dsfh sidfh sdifhsdif  idsfh sdifh sdifhfhisdhfngfhf sdfhjsd awe erhwe re iehrf ieh fhi fihe fierheirhf eiheir heifhiehrfie íd"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/image_container"
@@ -51,11 +52,11 @@
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="50dp"
             android:background="@drawable/shadow_top"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -66,7 +67,7 @@
                 android:layout_height="100dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/food" />
+                android:src="@color/comment" />
         </androidx.cardview.widget.CardView>
 
 

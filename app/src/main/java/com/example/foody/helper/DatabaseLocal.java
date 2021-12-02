@@ -8,11 +8,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.foody.model.Ingredients;
+import com.example.foody.model.Process;
 import com.example.foody.model.Recipe;
+import com.example.foody.model.RecipeDetail;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +45,7 @@ public class DatabaseLocal extends SQLiteOpenHelper {
     public static class RecipeIngredientTable {
         public static final String TABLE_NAME = "recipeIngredientTable";
         public static final String COLUMN_NAME_IMAGE = "image";
+        public static final String COLUMN_NAME_ID_INGREDIENT = "id";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_UNIT = "unit";
         public static final String COLUMN_NAME_WEIGHT = "weight";
@@ -53,13 +59,10 @@ public class DatabaseLocal extends SQLiteOpenHelper {
         public static final String ID_RECIPE = "id";
     }
 
-
-
     private static final String SQL_CREATE_TABLE_RECIPE =
             "CREATE TABLE " + RecipeTable.TABLE_NAME + " (" +
                     RecipeTable.ID_RECIPE + " TEXT PRIMARY KEY," +
                     RecipeTable.COLUMN_NAME_TITLE + " TEXT," +
-
                     RecipeTable.COLUMN_NAME_TIME + " TEXT," +
                     RecipeTable.COLUMN_NAME_IMAGE + " BLOB," +
                     RecipeTable.COLUMN_NAME_VEGAN + " TEXT," +
@@ -79,7 +82,6 @@ public class DatabaseLocal extends SQLiteOpenHelper {
                     RecipeIngredientTable.COLUMN_NAME_UNIT + " TEXT," +
                     RecipeIngredientTable.COLUMN_NAME_WEIGHT + " TEXT," +
                     RecipeIngredientTable.COLUMN_NAME_NAME + " TEXT)";
-
 
     private static final String SQL_CREATE_TABLE_RECIPE_INSTRUCTION =
             "CREATE TABLE " + RecipeInstructionTable.TABLE_NAME + " (" +
@@ -119,18 +121,57 @@ public class DatabaseLocal extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public static void addRecipe (SQLiteDatabase  db , Recipe recipe,byte[] bytesImage){
+    public static void addRecipe (SQLiteDatabase  db , RecipeDetail recipe){
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(RecipeTable.ID_RECIPE, recipe.id);
-        values.put(RecipeTable.COLUMN_NAME_IMAGE, bytesImage);
-        values.put(RecipeTable.COLUMN_NAME_LIKE, new Integer(recipe.totalLike).toString());
-        values.put(RecipeTable.COLUMN_NAME_TITLE, recipe.title);
-        values.put(RecipeTable.COLUMN_NAME_SUMMARY, recipe.summary);
-        values.put(RecipeTable.COLUMN_NAME_TIME, new Integer(recipe.totalTime).toString());
-        values.put(RecipeTable.COLUMN_NAME_VEGAN,new  Boolean(recipe.vegan).toString());
+        values.put(RecipeTable.ID_RECIPE, recipe.getRecipeId());
+        values.put(RecipeTable.COLUMN_NAME_IMAGE, getBitmapAsByteArray(recipe.getImageRecipe()));
+        values.put(RecipeTable.COLUMN_NAME_LIKE, Integer.toString(recipe.getTotalLike()));
+        values.put(RecipeTable.COLUMN_NAME_TITLE, recipe.getTitle());
+        values.put(RecipeTable.COLUMN_NAME_SUMMARY, recipe.getSummary());
+        values.put(RecipeTable.COLUMN_NAME_TIME, Integer.toString(recipe.getTotalTime()));
+        values.put(RecipeTable.COLUMN_NAME_VEGAN, Boolean.toString((recipe.isVegan())));
+        values.put(RecipeTable.COLUMN_NAME_HEALTHY, Boolean.toString(recipe.isHealthy()));
+        values.put(RecipeTable.COLUMN_NAME_CHEAP, Boolean.toString(recipe.isCheap()));
+        values.put(RecipeTable.COLUMN_NAME_DAIRY_FREE, Boolean.toString(recipe.isDairyFree()));
+        values.put(RecipeTable.COLUMN_NAME_GLUTEN_FREE, Boolean.toString(recipe.isGlutentFree()));
+        values.put(RecipeTable.COLUMN_NAME_VEGETARIAN, Boolean.toString((recipe.isVegetarian())));
         // Insert the new row, returning the primary key value of the new row
         db.insert(RecipeTable.TABLE_NAME, null, values);
+        for (Ingredients item :  recipe.getIngredientsList()){
+            Log.e("Click favorite icon ", item.getImageName());
+            DatabaseLocal.addIngredient(db,recipe.getRecipeId(),item);
+        }
+        for (Process item :  recipe.getProcessList()){
+            Log.e("Click favorite icon ",Integer.toString( item.getStep()));
+            DatabaseLocal.addInstruction(db,item ,recipe.getRecipeId());
+        }
+    }
+    public static void addInstruction (SQLiteDatabase  db , Process process,String idRecipe){
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(RecipeInstructionTable.ID_RECIPE, idRecipe);
+        values.put(RecipeInstructionTable.COLUMN_NAME_ACTION, process.getAction());
+        values.put(RecipeInstructionTable.COLUMN_NAME_STEP, Integer.toString(process.getStep()));
+        // Insert the new row, returning the primary key value of the new row
+        db.insert(RecipeInstructionTable.TABLE_NAME, null, values);
+    }
+    public static void addIngredient (SQLiteDatabase  db,String idRecipe , Ingredients ingredients){
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(RecipeIngredientTable.ID_RECIPE,idRecipe);
+        values.put(RecipeIngredientTable.COLUMN_NAME_IMAGE, getBitmapAsByteArray(ingredients.getImageBitmap()));
+        values.put(RecipeIngredientTable.COLUMN_NAME_NAME,ingredients.getName());
+        values.put(RecipeIngredientTable.COLUMN_NAME_UNIT, ingredients.getUnit());
+        values.put(RecipeIngredientTable.COLUMN_NAME_WEIGHT, Integer.toString(ingredients.getWeight()));
+        values.put(RecipeIngredientTable.COLUMN_NAME_ID_INGREDIENT,Integer.toString( ingredients.getId()));
+        // Insert the new row, returning the primary key value of the new row
+        db.insert(RecipeIngredientTable.TABLE_NAME, null, values);
+    }
+    public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
+        return outputStream.toByteArray();
     }
 
 
@@ -162,18 +203,17 @@ public class DatabaseLocal extends SQLiteOpenHelper {
                 null               // The sort order
         );
         while(cursor.moveToNext()) {
-
             String id  = cursor.getString(
                     cursor.getColumnIndexOrThrow(RecipeTable.ID_RECIPE));
             String title  = cursor.getString(
                     cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_TITLE));
             String summary  = cursor.getString(
                     cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_SUMMARY));
-            Boolean vegan  = new Boolean(cursor.getString(
+            Boolean vegan  = Boolean.valueOf(cursor.getString(
                     cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_VEGAN)));
-            int time  = new Integer(cursor.getString(
+            int time  = Integer.parseInt(cursor.getString(
                     cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_TIME)));
-            int like  = new Integer(cursor.getString(
+            int like  = Integer.parseInt(cursor.getString(
                     cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_LIKE)));
             byte[] image  = cursor.getBlob(
                     cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_IMAGE));
