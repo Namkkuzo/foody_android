@@ -19,12 +19,15 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.ViewHolder> {
 
     List<CommentRecipe> data;
     String recipeId ;
+    List<Boolean> listIsLoadingImage = new ArrayList<>();
+    List<Boolean> listIsLoadingAvatar = new ArrayList<>();
 
     public ListCommentAdapter(List<CommentRecipe> data, String recipeId) {
         this.data = data;
@@ -38,7 +41,6 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
         return new ListCommentAdapter.ViewHolder(view);
     }
 
-
     @Override
     public int getItemViewType(int position)
     {
@@ -47,56 +49,78 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (position >= listIsLoadingImage.size()){
+            int currentSize = listIsLoadingImage.size();
+            for(int i= currentSize;i<= position+1;i++){
+                listIsLoadingImage.add(false);
+            }
+        }
+        if (position >= listIsLoadingAvatar.size()){
+            int currentSize = listIsLoadingAvatar.size();
+            for(int i= currentSize;i<= position+1;i++){
+                listIsLoadingAvatar.add(false);
+            }
+        }
         final  CommentRecipe  comment = data.get(position);
         holder.author.setText(comment.author.userName);
         holder.content.setText(comment.content);
         if (comment.content.equals("")){
             holder.content.setVisibility(View.GONE);
-            Log.e("ListRecipeAdapter", "get content gone");
         }
         else {
-            Log.e("ListRecipeAdapter", "get content VISIBLE");
             holder.content.setVisibility(View.VISIBLE);
         }
         if (comment.imageName != null) {
-            try {
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageReference = storage.getReference();
-                StorageReference reference = storageReference.child("ImageRecipe/" + recipeId + "/Comment/" + comment.imageName + "." + comment.imageType);
-                final File localFileAvatar = File.createTempFile(comment.imageName, comment.imageType);
-                reference.getFile(localFileAvatar).addOnSuccessListener(downloadResult -> {
-                    Bitmap bitmapAvatar = BitmapFactory.decodeFile(localFileAvatar.getAbsolutePath());
-                    Log.e("listcomment", " get image " + comment.imageName + " Success");
-                    holder.image.setImageBitmap(bitmapAvatar);
-                }).addOnFailureListener(e -> {
-                    Log.e("listcomment", " get image " + comment.imageName + " fail");
-                });
+            if (!listIsLoadingImage.get(position)){
+                try {
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference storageReference = storage.getReference();
+                    StorageReference reference = storageReference.child("ImageRecipe/" + recipeId + "/Comment/" + comment.imageName + "." + comment.imageType);
+                    final File localFileAvatar = File.createTempFile(comment.imageName, comment.imageType);
+                    reference.getFile(localFileAvatar).addOnSuccessListener(downloadResult -> {
+                        Bitmap bitmapAvatar = BitmapFactory.decodeFile(localFileAvatar.getAbsolutePath());
+                        Log.e("listcomment", " get image " + comment.imageName + " Success");
+                        holder.image.setImageBitmap(bitmapAvatar);
+                        data.get(position).Image= bitmapAvatar;
+                        listIsLoadingImage.set(position,true);
+                    }).addOnFailureListener(e -> {
+                        Log.e("listcomment", " get image " + comment.imageName + " fail");
+                    });
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                holder.image.setImageBitmap(data.get(position).Image);
             }
         } else {
             holder.image.setVisibility(View.GONE);
         }
 
         if (comment.author.imageName != null) {
-            try {
-                final String name = comment.author.imageName ;
-                final String type = comment.author.imageType;
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageReference = storage.getReference();
-                StorageReference reference = storageReference.child("ImageProfile/" + comment.author.imageName + "." + comment.author.imageType);
-                final File localFile = File.createTempFile(name, type);
-                reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
-                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                    Log.e("ListRecipeAdapter", " get image profile " + comment.imageName + " Success");
-                    holder.avatar.setImageBitmap(bitmap);
-                }).addOnFailureListener(e -> {
-                    Log.e("ListRecipeAdapter", " get image profile " + comment.imageName + " fail");
-                });
+            if (!listIsLoadingAvatar.get(position)){
+                try {
+                    final String name = comment.author.imageName ;
+                    final String type = comment.author.imageType;
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference storageReference = storage.getReference();
+                    StorageReference reference = storageReference.child("ImageProfile/" + comment.author.imageName + "." + comment.author.imageType);
+                    final File localFile = File.createTempFile(name, type);
+                    reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
+                        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                        Log.e("ListRecipeAdapter", " get image profile " + comment.imageName + " Success");
+                        holder.avatar.setImageBitmap(bitmap);
+                        listIsLoadingAvatar.set(position,true);
+                        data.get(position).author.image = bitmap;
+                    }).addOnFailureListener(e -> {
+                        Log.e("ListRecipeAdapter", " get image profile " + comment.imageName + " fail");
+                    });
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                holder.avatar.setImageBitmap(data.get(position).author.image);
             }
         }
     }
@@ -106,9 +130,6 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
         return data.size();
     }
 
-    public void setItems(List<CommentRecipe> listComment) {
-        this.data = listComment;
-    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView avatar, image;

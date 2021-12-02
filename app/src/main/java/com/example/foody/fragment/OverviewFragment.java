@@ -65,7 +65,6 @@ public class OverviewFragment extends Fragment {
 
 
     public void saveToDatabase(){
-        Log.e("Click favorite icon ", "overview");
         DatabaseLocal dbHelper = new DatabaseLocal(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         DatabaseLocal.addRecipe(db,recipeDetail);
@@ -152,12 +151,12 @@ public class OverviewFragment extends Fragment {
                             ingredients.setId(Integer.parseInt(itemIng.child("Id").getValue().toString()));
                             ingredients.setImageName(itemIng.child("ImageName").getValue().toString());
                             ingredients.setImageType(itemIng.child("ImageType").getValue().toString());
-                            ingredients.setName(itemIng.child("ImageType").getValue().toString());
+                            ingredients.setName(itemIng.child("Name").getValue().toString());
                             ingredients.setUnit(itemIng.child("Unit").getValue().toString());
                             ingredients.setWeight(Integer.parseInt(itemIng.child("Weight").getValue().toString()));
                             StorageReference reference = storageReference.child("ImageRecipe/" + recipeDetail.getRecipeId() + "/Ingredients/"+ ingredients.getImageName() +  "." + ingredients.getImageType());
                             try {
-                                final File localFile = File.createTempFile(ingredients.getName(), ingredients.getImageType());
+                                final File localFile = File.createTempFile("anhnguyenlieu", ingredients.getImageType());
                                 reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
                                     Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
                                     ingredients.setImageBitmap(bitmap);

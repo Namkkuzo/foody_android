@@ -28,7 +28,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.List;
 
 public class RecipeDetailActivity extends AppCompatActivity {
-
+    public static final int HAVE_CHANGE_DATABASE = 1;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private  Recipe recipe ;
@@ -70,7 +70,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setResult(100);
                 Log.e("Click back icon ", "100");
                 finish();
             }
@@ -78,10 +77,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         favoriteIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setResult(200);
+                setResult(HAVE_CHANGE_DATABASE);
                 adapter.saveDataToDatabase();
-                Log.e("Click favorite icon ", "200");
-                Log.e("resultFormMainActivity", recipe.id);
             }
         });
 
@@ -124,7 +121,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 }
             }
         }
-
 
         super.onActivityResult(requestCode, resultCode, data);
     }
