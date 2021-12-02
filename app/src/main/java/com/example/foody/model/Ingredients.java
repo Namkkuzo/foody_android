@@ -9,7 +9,7 @@ public class Ingredients {
     private String name;
     private String unit;
     private int weight;
-    public Bitmap imageBitmap;
+    private Bitmap imageBitmap;
 
     public Ingredients() {
     }

@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +25,9 @@ import com.example.foody.R;
 import com.example.foody.activity.RecipeDetailActivity;
 import com.example.foody.helper.Contain;
 import com.example.foody.model.Recipe;
-import com.huawei.agconnect.cloud.storage.core.AGCStorageManagement;
-import com.huawei.agconnect.cloud.storage.core.StorageReference;
+import com.example.foody.model.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 
 import java.io.File;
@@ -35,30 +35,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.ViewHolder>  {
-
-//    public interface OnBindCallback {
-//        void onViewBound(ListRecipeAdapter.ViewHolder viewHolder, int position);
-//    }
-
-    private final List<Recipe> data;
-    Context mContext ;
+public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.ViewHolder> {
+    List<Recipe> data = new ArrayList<>();
+    Context mContext;
+    User user;
     private final int type;
-    List<String> picked ;
+    List<String> picked = new ArrayList<>();
     int totalPick;
 
 
-    public ListRecipeAdapter(List<Recipe> recipeList, int type) {
+    public ListRecipeAdapter(int type, User user) {
         this.type = type;
-        this.data = recipeList;
-        picked = new ArrayList<>();
-        for (int i = 0; i < recipeList.size(); i++) {
-            picked.add("");
-        }
+        this.user = user;
         totalPick = 0;
     }
 
-    public List<String> getListPicked (){
+    public void newData(Recipe data) {
+        this.data.add(data);
+        picked.add("");
+        notifyDataSetChanged();
+    }
+
+    public List<String> getListPicked() {
         return picked;
     }
 
@@ -76,10 +74,11 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ListRecipeAdapter.ViewHolder holder,  int position) {
+    public void onBindViewHolder(@NonNull ListRecipeAdapter.ViewHolder holder, int position) {
         final Recipe recipe = data.get(position);
-        AGCStorageManagement storageManagement = AGCStorageManagement.getInstance();
-        StorageReference reference = storageManagement.getStorageReference("ImageRecipe/" + recipe.id + "/" + recipe.imageName + "." + recipe.imageType);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+        StorageReference reference = storageReference.child("ImageRecipe/" + recipe.id + "/" + recipe.imageName + "." + recipe.imageType);
         if (type == Contain.LIST_RECIPE) {
             try {
                 final File localFile = File.createTempFile(recipe.imageName, recipe.imageType);
@@ -98,11 +97,9 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
             holder.imageRecipe.setImageBitmap(recipe.imageBitmap);
         }
 
-        if(picked.get(position).equals(recipe.id)){
+        if (picked.get(position).equals(recipe.id)) {
             holder.layout.setBackgroundColor(Color.parseColor("#efe8ff"));
-        }
-        else
-        {
+        } else {
             holder.layout.setBackgroundColor(Color.parseColor("#ffffff"));
         }
 
@@ -110,9 +107,9 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
         holder.title.setText(recipe.title);
         holder.summary.setText(recipe.summary);
 
-        holder.favorite.setText( Integer.toString(recipe.totalLike));
+        holder.favorite.setText(Integer.toString(recipe.totalLike));
 
-        holder.time.setText( Integer.toString(recipe.totalTime));
+        holder.time.setText(Integer.toString(recipe.totalTime));
 
 
         if (recipe.vegan) {
@@ -123,53 +120,51 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
             holder.iconVegan.setImageResource(R.drawable.ic_vegan);
         }
         int index = position;
-        holder.layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void  onClick(View view) {
-                Drawable  viewColor =  holder.layout.getBackground();
-                if (type == Contain.LIST_FAVORITE){
-                    if(((ColorDrawable) viewColor).getColor()== Color.parseColor("#ffffff") && totalPick>0 ){
-                        holder.layout.setBackgroundColor(Color.parseColor("#efe8ff"));
-                        totalPick ++;
-                        picked.set(index, recipe.id);
-                    }else {
-                        holder.layout.setBackgroundColor(Color.parseColor("#ffffff"));
-                        picked.set(index, "");
-                        totalPick--;
-                    }
-                }else{
-                    //go to detail in here
-                    Intent detail = new Intent(view.getContext(), RecipeDetailActivity.class);
-                    detail.putExtra("RecipeId", recipe.id);
-                    ((Activity)mContext).startActivityForResult(detail,type);
+        holder.layout.setOnClickListener(view -> {
+            Drawable viewColor = holder.layout.getBackground();
+            if (type == Contain.LIST_FAVORITE) {
+                if (((ColorDrawable) viewColor).getColor() == Color.parseColor("#ffffff") && totalPick > 0) {
+                    holder.layout.setBackgroundColor(Color.parseColor("#efe8ff"));
+                    totalPick++;
+                    picked.set(index, recipe.id);
+                } else {
+                    holder.layout.setBackgroundColor(Color.parseColor("#ffffff"));
+                    picked.set(index, "");
+                    totalPick--;
                 }
-                notifyDataSetChanged();
+            } else {
+                //go to detail in here
+                Intent detail = new Intent(view.getContext(), RecipeDetailActivity.class);
+                detail.putExtra("RecipeId", recipe.id);
+                detail.putExtra("ImageType", user.imageType);
+                detail.putExtra("ImageName", user.imageName);
+                detail.putExtra("UserName", user.userName);
+                detail.putExtra("UserID", user.id);
+                ((Activity) mContext).startActivityForResult(detail, type);
             }
+            notifyItemChanged(position);
         });
 
-        holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Drawable  viewColor =  holder.layout.getBackground();
-                if (type == Contain.LIST_FAVORITE) {
-                    int color = ((ColorDrawable) viewColor).getColor();
-                    if( color== Color.parseColor("#ffffff") && totalPick==0){
-                        holder.layout.setBackgroundColor(Color.parseColor("#efe8ff"));
-                        picked.set(index,recipe.id);
-                        totalPick++;
-                    }
+        holder.layout.setOnLongClickListener(v -> {
+            Drawable viewColor = holder.layout.getBackground();
+            if (type == Contain.LIST_FAVORITE) {
+                int color = ((ColorDrawable) viewColor).getColor();
+                if (color == Color.parseColor("#ffffff") && totalPick == 0) {
+                    holder.layout.setBackgroundColor(Color.parseColor("#efe8ff"));
+                    picked.set(index, recipe.id);
+                    totalPick++;
                 }
-                return true;
             }
+            return true;
         });
 
     }
+
 
     @Override
     public int getItemCount() {
         return data.size();
     }
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageRecipe, iconVegan;

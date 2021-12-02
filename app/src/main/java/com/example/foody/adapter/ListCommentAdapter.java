@@ -1,6 +1,5 @@
 package com.example.foody.adapter;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -15,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foody.R;
 import com.example.foody.model.CommentRecipe;
-import com.huawei.agconnect.cloud.storage.core.AGCStorageManagement;
-import com.huawei.agconnect.cloud.storage.core.StorageReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +23,8 @@ import java.util.List;
 
 public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.ViewHolder> {
 
-    private final List<CommentRecipe> data;
-     final String recipeId ;
+    List<CommentRecipe> data;
+    String recipeId ;
 
     public ListCommentAdapter(List<CommentRecipe> data, String recipeId) {
         this.data = data;
@@ -39,23 +38,38 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
         return new ListCommentAdapter.ViewHolder(view);
     }
 
+
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final  CommentRecipe  comment = data.get(position);
         holder.author.setText(comment.author.userName);
         holder.content.setText(comment.content);
-
-        if (!comment.imageName.equals("")) {
+        if (comment.content.equals("")){
+            holder.content.setVisibility(View.GONE);
+            Log.e("ListRecipeAdapter", "get content gone");
+        }
+        else {
+            Log.e("ListRecipeAdapter", "get content VISIBLE");
+            holder.content.setVisibility(View.VISIBLE);
+        }
+        if (comment.imageName != null) {
             try {
-                AGCStorageManagement storageManagement = AGCStorageManagement.getInstance();
-                StorageReference reference = storageManagement.getStorageReference("ImageRecipe/" + recipeId + "/Comment/" + comment.imageName + "." + comment.imageType);
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageReference = storage.getReference();
+                StorageReference reference = storageReference.child("ImageRecipe/" + recipeId + "/Comment/" + comment.imageName + "." + comment.imageType);
                 final File localFileAvatar = File.createTempFile(comment.imageName, comment.imageType);
                 reference.getFile(localFileAvatar).addOnSuccessListener(downloadResult -> {
                     Bitmap bitmapAvatar = BitmapFactory.decodeFile(localFileAvatar.getAbsolutePath());
-                    Log.e("ListRecipeAdapter", " get image " + position + "Success");
+                    Log.e("listcomment", " get image " + comment.imageName + " Success");
                     holder.image.setImageBitmap(bitmapAvatar);
                 }).addOnFailureListener(e -> {
-                    Log.e("ListRecipeAdapter", " get image " + position + "fail");
+                    Log.e("listcomment", " get image " + comment.imageName + " fail");
                 });
 
             } catch (IOException e) {
@@ -69,15 +83,16 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
             try {
                 final String name = comment.author.imageName ;
                 final String type = comment.author.imageType;
-                AGCStorageManagement storageManagement = AGCStorageManagement.getInstance();
-                StorageReference reference = storageManagement.getStorageReference("ImageProfile/" + comment.author.imageName + "." + comment.author.imageType);
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageReference = storage.getReference();
+                StorageReference reference = storageReference.child("ImageProfile/" + comment.author.imageName + "." + comment.author.imageType);
                 final File localFile = File.createTempFile(name, type);
                 reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
                     Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                    Log.e("ListRecipeAdapter", " get image " + position + "Success");
+                    Log.e("ListRecipeAdapter", " get image profile " + comment.imageName + " Success");
                     holder.avatar.setImageBitmap(bitmap);
                 }).addOnFailureListener(e -> {
-                    Log.e("ListRecipeAdapter", " get image " + position + "fail");
+                    Log.e("ListRecipeAdapter", " get image profile " + comment.imageName + " fail");
                 });
 
             } catch (IOException e) {
@@ -89,6 +104,10 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public void setItems(List<CommentRecipe> listComment) {
+        this.data = listComment;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

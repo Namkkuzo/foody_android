@@ -1,6 +1,8 @@
 package com.example.foody.fragment;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,29 +31,28 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link IngredientFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class IngredientFragment extends Fragment {
 
-    private String recipeId;
-
-    public IngredientFragment(String recId) {
-        this.recipeId = recId;
-        // Required empty public constructor
-    }
-
+    List<Ingredients> ingredientsList;
     View view;
     DatabaseReference mReference;
     private RecyclerView recyclerView;
+    String recipeId ;
     private ListIngredientsAdapter listIngredientsAdapter;
-    List<Ingredients> ingredientsList;
+
+    public IngredientFragment(String id) {
+        this.recipeId = id;
+        // Required empty public constructor
+    }
 
 
     @Override
@@ -63,7 +65,7 @@ public class IngredientFragment extends Fragment {
         myLayout.setStackFromEnd(true);
         recyclerView.setLayoutManager(myLayout);
         recyclerView.setHasFixedSize(true);
-        getListIngredients(recipeId);
+        getRecipeDetailByReID();
         return view;
     }
 
@@ -79,46 +81,37 @@ public class IngredientFragment extends Fragment {
 
     }
 
-     void getListIngredients(String recipeId){
-        RecipeDetail recipeDetail = new RecipeDetail();
-        DatabaseReference mRecipeDetail = mReference.child("RecipeDetail");
+    void getRecipeDetailByReID(){
+        DatabaseReference mRecipeDetail = mReference.child("RecipeDetail").child(recipeId);
         mRecipeDetail.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot item : snapshot.getChildren()){
-                    if(item.child("RecipeId").getValue().toString().equalsIgnoreCase(recipeId)){
-                        String id = item.child("Id").getValue().toString();
-                        DatabaseReference mRecipeDetailChild = mRecipeDetail.child(id);
-                        DatabaseReference mIngredients = mRecipeDetailChild.child("Ingredients");
-                        mIngredients.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot1) {
-                                List<Ingredients> ingredientsList = new ArrayList<>();
-                                for (DataSnapshot itemIng : snapshot1.getChildren()){
-                                    Ingredients ingredients = new Ingredients();
-                                    ingredients.setId(Integer.parseInt(itemIng.child("Id").getValue().toString()));
-                                    ingredients.setImageName(itemIng.child("ImageName").getValue().toString());
-                                    ingredients.setImageType(itemIng.child("ImageType").getValue().toString());
-                                    ingredients.setName(itemIng.child("Name").getValue().toString());
-                                    ingredients.setUnit(itemIng.child("Unit").getValue().toString());
-                                    ingredients.setWeight(Integer.parseInt(itemIng.child("Weight").getValue().toString()));
-                                    ingredientsList.add(ingredients);
-                                }
-                                listIngredientsAdapter = new ListIngredientsAdapter(ingredientsList,Contain.LIST_INGREDIENTS);
-                                recyclerView.setAdapter(listIngredientsAdapter);
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                DatabaseReference mIngredients = mRecipeDetail.child("Ingredients");
+                mIngredients.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot1) {
+                        List<Ingredients> ingredientsList = new ArrayList<>();
+                        for (DataSnapshot itemIng : snapshot1.getChildren()){
+                            Ingredients ingredients = new Ingredients();
+                            ingredients.setId(Integer.parseInt(itemIng.child("Id").getValue().toString()));
+                            ingredients.setImageName(itemIng.child("ImageName").getValue().toString());
+                            ingredients.setImageType(itemIng.child("ImageType").getValue().toString());
+                            ingredients.setName(itemIng.child("Name").getValue().toString());
+                            ingredients.setUnit(itemIng.child("Unit").getValue().toString());
+                            ingredients.setWeight(Integer.parseInt(itemIng.child("Weight").getValue().toString()));
 
-                            }
-                        });
+                            ingredientsList.add(ingredients);
+                        }
+                        listIngredientsAdapter = new ListIngredientsAdapter(ingredientsList,recipeId);
+                        recyclerView.setAdapter(listIngredientsAdapter);
+                    }
 
-
-
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
+                });
             }
 
             @Override
@@ -127,4 +120,5 @@ public class IngredientFragment extends Fragment {
             }
         });
     }
+
 }

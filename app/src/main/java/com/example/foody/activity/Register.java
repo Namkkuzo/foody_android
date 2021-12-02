@@ -162,7 +162,6 @@ public class Register extends AppCompatActivity {
         HashMap<String, String> newUser = new HashMap<>();
         newUser.put("ID", userId);
         newUser.put("UserName", username);
-        newUser.put("Picture", "default");
         newUser.put("Email", email);
         mReference.child("User").child(userId).child("Profile").setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

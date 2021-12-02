@@ -1,5 +1,8 @@
 package com.example.foody.model;
 
+import android.graphics.Bitmap;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeDetail {
@@ -11,8 +14,10 @@ public class RecipeDetail {
     private boolean glutentFree;
     private boolean healthy;
     private String imageName;
+    private Bitmap imageRecipe;
     private String imageType;
-    private List<Process> processList;
+    private int totalLike;
+    private List<Process> processList ;
     private List<Ingredients> ingredientsList;
     private String recipeId;
     private String summary;
@@ -97,7 +102,11 @@ public class RecipeDetail {
     }
 
     public List<Process> getProcessList() {
-        return processList;
+        if (processList == null )
+            return new ArrayList<>();
+        else {
+            return processList;
+        }
     }
 
     public void setProcessList(List<Process> processList) {
@@ -105,7 +114,11 @@ public class RecipeDetail {
     }
 
     public List<Ingredients> getIngredientsList() {
-        return ingredientsList;
+        if (ingredientsList == null )
+        return new ArrayList<>();
+        else {
+            return ingredientsList;
+        }
     }
 
     public void setIngredientsList(List<Ingredients> ingredientsList) {
@@ -152,4 +165,19 @@ public class RecipeDetail {
         this.vegetarian = vegetarian;
     }
 
+    public int getTotalLike() {
+        return totalLike;
+    }
+
+    public void setTotalLike(int totalLike) {
+        this.totalLike = totalLike;
+    }
+
+    public Bitmap getImageRecipe() {
+        return imageRecipe;
+    }
+
+    public void setImageRecipe(Bitmap imageRecipe) {
+        this.imageRecipe = imageRecipe;
+    }
 }

@@ -76,11 +76,12 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user.userName =  dataSnapshot.child("UserName").getValue().toString();
                 user.email =  currentUser.getEmail();
-                if (dataSnapshot.child("ImageName").exists())
-                user.imageName =  dataSnapshot.child("ImageName").getValue().toString();
-                if (dataSnapshot.child("ImageType").exists())
-                user.imageType =  dataSnapshot.child("ImageType").getValue().toString();
-                Log.e("MainActivity", "get user success");
+                try {
+                    user.imageName =  dataSnapshot.child("ImageName").getValue().toString();
+                    user.imageType =  dataSnapshot.child("ImageType").getValue().toString();
+                }catch (Exception e){
+
+                }
             }
 
             @Override
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.Main_viewpager);
         tabLayout = findViewById(R.id.main_tablayout);
         mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
-        viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager(), user));
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_baseline_menu_book_24);
         tabLayout.getTabAt(0).setText("Món ăn");
@@ -106,15 +107,17 @@ public class MainActivity extends AppCompatActivity {
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         final int  PAGE_NUMBER = 2;
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
+        User user ;
+        public ScreenSlidePagerAdapter(FragmentManager fm, User user) {
             super(fm);
+            this.user = user;
         }
 
         @Override
         public Fragment getItem(int position) {
             if (position == 0)
-            return new RecipeFragment();
-            else return new FavoriteFragment();
+            return new RecipeFragment(user);
+            else return new FavoriteFragment(user);
         }
 
         @Override
