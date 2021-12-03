@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.ViewHolder> {
-    List<Recipe> data = new ArrayList<>();
+    List<Recipe> data ;
     Context mContext;
     User user;
     private final int type;
@@ -46,22 +46,15 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
     int totalPick;
 
 
-    public ListRecipeAdapter(int type, User user) {
+    public ListRecipeAdapter(List<Recipe> data , int type, User user) {
+        this.data = data;
         this.type = type;
         this.user = user;
         totalPick = 0;
     }
 
-    public void newData(Recipe data) {
-        this.data.add(data);
-        picked.add("");
-        notifyDataSetChanged();
-    }
     public void newListData(List<Recipe> data) {
         this.data = data;
-        for (int i= 0;i<data.size();i++){
-            picked.add("");
-        }
         notifyDataSetChanged();
     }
 
@@ -71,7 +64,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        return position;
     }
 
     @NonNull
@@ -84,6 +77,12 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ListRecipeAdapter.ViewHolder holder, int position) {
+        if (position >= picked.size()) {
+            int currentSize = picked.size();
+            for (int i = currentSize; i <= position + 1; i++) {
+                picked.add("");
+            }
+        }
         final Recipe recipe = data.get(position);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
