@@ -1,5 +1,6 @@
 package com.example.foody.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.example.foody.activity.LoginActivity;
+import com.example.foody.activity.ProfileActivity;
+import com.example.foody.activity.RecipeDetailActivity;
 import com.example.foody.adapter.ListRecipeAdapter;
 import com.example.foody.helper.Contain;
 import com.example.foody.helper.DatabaseLocal;
@@ -53,6 +56,7 @@ public class RecipeFragment extends Fragment {
     DatabaseLocal dbHelper ;
     SQLiteDatabase db ;
 
+
     public RecipeFragment(User user) {
         // Required empty public constructor
         this.user = user;
@@ -73,6 +77,11 @@ public class RecipeFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.button_account:
+                Intent detail = new Intent(view.getContext(), ProfileActivity.class);
+                detail.putExtra("userId", user.id);
+                startActivity(detail);
+                return true;
             case R.id.logout:
                 AGConnectAuth.getInstance().signOut();
                 startActivity(new Intent(getActivity(), LoginActivity.class));

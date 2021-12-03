@@ -73,35 +73,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-//            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//                @Override
-//                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//
-//                }
-//
-//                @Override
-//                public void onPageSelected(int position) {
-//
-//                }
-//
-//                @Override
-//                public void onPageScrollStateChanged(int state) {
-//                    List<Fragment> fragments = getSupportFragmentManager().getFragments();
-//                    if (fragments != null) {
-//                        for (Fragment fragment : fragments) {
-//                            if(fragment instanceof FavoriteFragment) {
-//                                if (!reloaded){
-//                                    ((FavoriteFragment) fragment).getListRecipe();
-//                                    reloaded = true;
-//                                }
-//                            }
-//                        }
-//                    }
-////                    ScreenSlidePagerAdapter screenSlidePagerAdapter =(ScreenSlidePagerAdapter) viewPager.getAdapter();
-////                    screenSlidePagerAdapter.setFavoriteFragment(new FavoriteFragment(user));
-////                    viewPager.setAdapter(screenSlidePagerAdapter);
-//                }
-//            });
+
         }
     }
 
