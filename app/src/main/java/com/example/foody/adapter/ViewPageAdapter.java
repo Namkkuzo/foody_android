@@ -53,7 +53,7 @@ public class ViewPageAdapter extends FragmentStateAdapter {
         mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
         ingredientFragment = new IngredientFragment(recipe.id, fromLocal);
         commentFragment =  new CommentFragment(recipe, user);
-        overviewFragment =  new OverviewFragment(recipe.id, fromLocal);
+        overviewFragment =  new OverviewFragment(recipe.id, fromLocal, user.id);
     }
 
 

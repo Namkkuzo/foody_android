@@ -181,7 +181,6 @@ public class ProfileActivity extends AppCompatActivity {
         if (data != null) {
             setDialog(true);
             uri = data.getData();
-            HashMap<String, Object> hashMap = new HashMap<>();
             String type = getExtension(uri);
             DatabaseReference profile = mReference.child("User").child(userId).child("Profile");
             profile.child("ImageName").setValue(userId);

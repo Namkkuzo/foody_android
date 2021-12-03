@@ -1,5 +1,6 @@
 package com.example.foody.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -48,6 +50,7 @@ public class OverviewFragment extends Fragment {
     TextView tvDescription;
     TextView tvProcess;
     TextView tvTotalTime;
+    ImageView iconLike;
     TextView tvTotalLike;
     ProgressDialog dialog;
     LinearLayout image ;
@@ -55,12 +58,14 @@ public class OverviewFragment extends Fragment {
     int sizeIngredientLoadedImage = 0;
     Boolean loadedImageRecipe = false;
     String recipeId;
+    String userId;
     RadioButton rdCheap,rdDairyFree, rdGlutent, rdHeathy, rdVegan, rdVegetarian;
 
 
-    public OverviewFragment(String id, Boolean fromLocal) {
+    public OverviewFragment(String id, Boolean fromLocal, String userId) {
         // Required empty public constructor
         recipeId= id;
+        this.userId = userId;
         this.fromLocal = fromLocal;
     }
 
@@ -115,6 +120,7 @@ public class OverviewFragment extends Fragment {
         tvDescription = (TextView) view.findViewById(R.id.tvDescription);
         tvTotalLike = (TextView) view.findViewById(R.id.totalLike) ;
         tvTotalTime = (TextView) view.findViewById(R.id.totalTime) ;
+        iconLike = (ImageView) view.findViewById(R.id.ic_like);
         dialog = new ProgressDialog(getContext());
         dialog.setTitle("Loading...");
     }
@@ -141,6 +147,7 @@ public class OverviewFragment extends Fragment {
     }
 
 
+    @SuppressLint("SetTextI18n")
     void setViewFromData (){
         rdCheap.setChecked(recipeDetail.isCheap());
         rdVegetarian.setChecked(recipeDetail.isVegetarian());
@@ -151,6 +158,12 @@ public class OverviewFragment extends Fragment {
         tvDescription.setText(recipeDetail.getDescription());
         tvTotalTime.setText(Integer.toString(recipeDetail.getTotalTime()));
         tvTotalLike.setText(Integer.toString(recipeDetail.getTotalLike()));
+        if(recipeDetail.isLiked()){
+            iconLike.setImageResource(R.drawable.ic_baseline_favorite_24);
+        }
+        else {
+            iconLike.setImageResource(R.drawable.ic_no_favorite);
+        }
 
     }
 
@@ -161,6 +174,14 @@ public class OverviewFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 recipeDetail.setCheap((boolean) snapshot.child("Cheap").getValue());
                 recipeDetail.setDairyFree((boolean) snapshot.child("DairyFree").getValue());
+                recipeDetail.setLiked(false);
+                try{
+                    if (!snapshot.child("PeopleLike").child(userId).getValue().toString().equals("")){
+                        recipeDetail.setLiked(true);
+                    }
+                }catch (Exception e){
+                    Log.e("Recipe Fragment","No Like");
+                }
                 recipeDetail.setDescription(snapshot.child("Description").getValue().toString());
                 recipeDetail.setGlutentFree((boolean) snapshot.child("GlutentFree").getValue());
                 recipeDetail.setHealthy((boolean) snapshot.child("Healthy").getValue());

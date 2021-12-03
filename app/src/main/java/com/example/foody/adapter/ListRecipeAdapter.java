@@ -26,6 +26,8 @@ import com.example.foody.activity.RecipeDetailActivity;
 import com.example.foody.helper.Contain;
 import com.example.foody.model.Recipe;
 import com.example.foody.model.User;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -117,8 +119,13 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
 
         holder.favorite.setText(Integer.toString(recipe.totalLike));
 
-        holder.time.setText(Integer.toString(recipe.totalTime));
 
+
+        if (recipe.liked) {
+            holder.iconLike.setImageResource(R.drawable.ic_baseline_favorite_24);
+        } else {
+            holder.iconLike.setImageResource(R.drawable.ic_no_favorite);
+        }
 
         if (recipe.vegan) {
             holder.vegan.setTextColor(Color.rgb(0, 200, 83));
@@ -128,6 +135,21 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
             holder.iconVegan.setImageResource(R.drawable.ic_vegan);
         }
         int index = position;
+        holder.iconLike.setOnClickListener(view -> {
+            if (!recipe.liked){
+                DatabaseReference mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference().child("RecipeDetail").child(recipe.id);
+                mReference.child("PeopleLike").child(user.id).setValue(user.id);
+                mReference.child("Like").setValue(recipe.totalLike+1);
+            }
+            else {
+                DatabaseReference mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference().child("RecipeDetail").child(recipe.id);
+                mReference.child("PeopleLike").child(user.id).removeValue();
+                mReference.child("Like").setValue(recipe.totalLike-1);
+            }
+
+
+            Log.e(">>>>>>>>>>>>>>>>>>>>","like");
+        });
         holder.layout.setOnClickListener(view -> {
             Drawable viewColor = holder.layout.getBackground();
             if (type == Contain.LIST_FAVORITE) {
@@ -187,7 +209,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imageRecipe, iconVegan;
+        public ImageView imageRecipe, iconVegan, iconLike;
         public TextView title, summary, favorite, vegan, time;
         public ConstraintLayout layout;
 
@@ -195,6 +217,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
             super(itemView);
             imageRecipe = itemView.findViewById(R.id.image_list_recipe);
             iconVegan = itemView.findViewById(R.id.ic_vegan);
+            iconLike = itemView.findViewById(R.id.ic_like);
             layout = itemView.findViewById(R.id.item_container);
             title = itemView.findViewById(R.id.title_recipe_list);
             summary = itemView.findViewById(R.id.summary_recipe_list);

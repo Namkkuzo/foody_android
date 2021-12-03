@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityCompat.requestPermissions(this, permissions, 1);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().hide();
         user = new User();
         mapview();
         getUser();
