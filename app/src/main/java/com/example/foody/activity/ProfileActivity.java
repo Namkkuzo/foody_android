@@ -5,7 +5,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,7 +20,10 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.foody.R;
@@ -45,8 +52,10 @@ public class ProfileActivity extends AppCompatActivity {
     DatabaseReference mReference;
     CardView cardView;
     ImageView imageUser;
+    Dialog dialog;
     TextView userNameBar, emailBar, userNamePr, emailPr, camera;
     String userId;
+    CoordinatorLayout layout;
     Uri uri;
 
 
@@ -67,9 +76,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadImgClient(User user) {
-
-        if (user.imageName != null && !user.imageName.isEmpty()){
-
+        if (!user.imageName.isEmpty() && !user.imageType.isEmpty()){
             try {
                 final String name = user.imageName;
                 final String type = user.imageType;
@@ -99,6 +106,10 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
     }
+    private void setDialog(boolean show){
+        if (show)dialog.show();
+        else dialog.dismiss();
+    }
 
     void mapview() {
         cardView = findViewById(R.id.cardView);
@@ -107,8 +118,13 @@ public class ProfileActivity extends AppCompatActivity {
         emailBar = findViewById(R.id.emailBar);
         userNamePr = findViewById(R.id.userNamePr);
         emailPr = findViewById(R.id.emailPr);
+        layout = findViewById(R.id.root_profile);
         camera = findViewById(R.id.change_photo);
         mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.progress);
+        // This should be called once in your Fragment's onViewCreated() or in Activity onCreate() method to avoid dialog duplicates.
+        dialog = builder.create();
     }
 
     private void loadInfoUser(User user) {
@@ -132,7 +148,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void getUser(String userId) {
-
         DatabaseReference profile = mReference.child("User").child(userId).child("Profile");
         User user = new User();
         profile.addValueEventListener(new ValueEventListener() {
@@ -143,6 +158,7 @@ public class ProfileActivity extends AppCompatActivity {
                 try {
                     user.imageName = dataSnapshot.child("ImageName").getValue().toString();
                     user.imageType = dataSnapshot.child("ImageType").getValue().toString();
+                    Log.e("ProfileActivity","get avt thành công");
                     loadImgClient(user);
                 } catch (Exception e) {
                     Log.e("ProfileActivity","no image");
@@ -163,19 +179,28 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
+            setDialog(true);
             uri = data.getData();
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("ImageName", userId);
             String type = getExtension(uri);
-            hashMap.put("ImageType", type);
+            DatabaseReference profile = mReference.child("User").child(userId).child("Profile");
+            profile.child("ImageName").setValue(userId);
+            profile.child("ImageType").setValue(type);
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageReference = storage.getReference();
             StorageReference reference = storageReference.child("ImageProfile/" + userId + "." + type);
             UploadTask task = reference.putFile(uri);
-            task.addOnFailureListener(exception -> Log.e("error aaaaaaaaaaaaaa", exception.getMessage())).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            task.addOnFailureListener(e -> {
+                Log.e("error aaaaaaaaaaaaaa", e.getMessage());
+                setDialog(false);
+                Toast.makeText(ProfileActivity.this,"Cập nhật thất bại",Toast.LENGTH_LONG).show();
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Log.e(">>>>>>>>>>>>>>>>>>>>>", "succes");
+                    Toast.makeText(ProfileActivity.this,"Cập nhật thành công",Toast.LENGTH_LONG).show();
+                    imageUser.setImageURI(uri);
+                    setDialog(false);
+//                    dialog.dismiss();
                 }
             });
         }

@@ -206,6 +206,7 @@ public class CommentFragment extends Fragment {
                 } catch (Exception e){
                     Log.e("CommentFragment Exception firebase", e.getMessage());
                 }
+                commentRecipe.key = snapshot.getKey();
                 commentRecipe.author.userName = snapshot.child("AuthorName").getValue().toString();
                 commentRecipe.content = snapshot.child("Content").getValue().toString();
                 commentRecipe.author.id = snapshot.child("Author").getValue().toString();
@@ -223,12 +224,59 @@ public class CommentFragment extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                CommentRecipe commentRecipe = new CommentRecipe();
+                String key = snapshot.getKey();
+                try{
+                    commentRecipe.imageName = snapshot.child("ImageName").getValue().toString();
+                    commentRecipe.imageType = snapshot.child("ImageType").getValue().toString();
+                } catch (Exception e){
+                    Log.e("CommentFragment Exception firebase", e.getMessage());
+                }
+                try{
+                    commentRecipe.author.imageName = snapshot.child("AuthorImageName").getValue().toString();
+                    commentRecipe.author.imageType = snapshot.child("AuthorImageType").getValue().toString();
+                } catch (Exception e){
+                    Log.e("CommentFragment Exception firebase", e.getMessage());
+                }
+                commentRecipe.author.userName = snapshot.child("AuthorName").getValue().toString();
+                commentRecipe.content = snapshot.child("Content").getValue().toString();
+                commentRecipe.author.id = snapshot.child("Author").getValue().toString();
+                for (int i =0 ;i<listComment.size();i++){
+                    if (listComment.get(i).key.equals(key)){
+                        listComment.set(i,commentRecipe);
+                        listCommentAdapter.notifyItemChanged(i);
+                    }
+                }
 
+                if (listComment.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    emptyText.setVisibility(View.VISIBLE);
+                }
+                else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyText.setVisibility(View.GONE);
+                }
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                String key = snapshot.getKey();
+                for (int i =0 ;i<listComment.size();i++){
+                    if (listComment.get(i).key.equals(key)){
+                        listComment.remove(i);
+                        listCommentAdapter.deleteItem(i);
 
+                    }
+                }
+
+                if (listComment.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    emptyText.setVisibility(View.VISIBLE);
+                }
+                else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyText.setVisibility(View.GONE);
+                }
             }
 
             @Override

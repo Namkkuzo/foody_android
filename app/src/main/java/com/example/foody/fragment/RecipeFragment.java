@@ -18,7 +18,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.foody.activity.LoginActivity;
 import com.example.foody.activity.ProfileActivity;
@@ -28,6 +31,7 @@ import com.example.foody.helper.Contain;
 import com.example.foody.helper.DatabaseLocal;
 import com.example.foody.model.Recipe;
 import com.example.foody.R;
+import com.example.foody.model.RecipeDetail;
 import com.example.foody.model.User;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.ChildEventListener;
@@ -53,10 +57,12 @@ import java.util.stream.Stream;
 public class RecipeFragment extends Fragment {
 
     View view;
-    User user ;
+    User user;
+    Toolbar toolbar;
+    ImageView imageAvatar;
     DatabaseReference mReference;
     private RecyclerView recyclerView;
-    private ListRecipeAdapter  listRecipeAdapter;
+    private ListRecipeAdapter listRecipeAdapter;
     List<Recipe> listRecipe;
     List<Recipe> listRecipeFilter;
     DatabaseLocal dbHelper ;
@@ -71,34 +77,12 @@ public class RecipeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+
         listRecipe = new ArrayList<Recipe> ();
         listRecipeFilter = new ArrayList<Recipe> ();
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_recipe, menu);  // Use filter.xml from step 1
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.button_account:
-                Intent detail = new Intent(view.getContext(), ProfileActivity.class);
-                detail.putExtra("userId", user.id);
-                startActivity(detail);
-                return true;
-            case R.id.logout:
-                AGConnectAuth.getInstance().signOut();
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-                getActivity().finish();
-                return true;
-            case R.id.button_filter:
-                showBottomSheetDialog();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private void showBottomSheetDialog() {
 
@@ -151,14 +135,13 @@ public class RecipeFragment extends Fragment {
         listRecipeAdapter.newListData(listRecipeFilter);
     }
 
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        view= inflater.inflate(R.layout.fragment_recipe, container, false);
+        view = inflater.inflate(R.layout.fragment_recipe, container, false);
         mapview();
-        LinearLayoutManager myLayout= new LinearLayoutManager(getContext());
+        LinearLayoutManager myLayout = new LinearLayoutManager(getContext());
         myLayout.setStackFromEnd(false);
         recyclerView.setLayoutManager(myLayout);
         recyclerView.setHasFixedSize(true);
@@ -169,49 +152,57 @@ public class RecipeFragment extends Fragment {
     }
 
 
-    void mapview(){
-        recyclerView = view.findViewById( R.id.list_recipe);
+    void mapview() {
+        recyclerView = view.findViewById(R.id.list_recipe);
+        imageAvatar = view.findViewById(R.id.image_user);
+        imageAvatar.setOnClickListener(view -> {
+            Intent detail = new Intent(view.getContext(), ProfileActivity.class);
+            detail.putExtra("userId", user.id);
+            startActivity(detail);
+        });
         mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
-
+        toolbar = (Toolbar) view.findViewById(R.id.my_toolbar);
+        toolbar.inflateMenu(R.menu.menu_recipe);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.logout:
+                        AGConnectAuth.getInstance().signOut();
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                        getActivity().finish();
+                        return true;
+                    default:
+                        showBottomSheetDialog();
+                        return true;
+                }
+            }
+        });
     }
 
 
-    void getListRecipe(){
+    void getListRecipe() {
         DatabaseReference mRecipe = mReference.child("RecipeDetail");
-//        mRecipe.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot item : snapshot.getChildren()){
-//                    Recipe recipe = new Recipe();
-//                    recipe.id = item.child("Id").getValue().toString();
-//                    recipe.imageName = item.child("ImageName").getValue().toString();
-//                    recipe.imageType = item.child("ImageType").getValue().toString();
-//                    recipe.totalLike =  Integer.parseInt(item.child("Like").getValue().toString());
-//                    recipe.totalTime =  Integer.parseInt(item.child("TotalTime").getValue().toString());
-//                    recipe.summary = item.child("Summary").getValue().toString();
-//                    recipe.title = item.child("Title").getValue().toString();
-//                    recipe.vegan =(boolean) item.child("Vegan").getValue();
-//                    listRecipe.add(recipe);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
         mRecipe.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Recipe recipe = new Recipe();
                 recipe.id = snapshot.child("Id").getValue().toString();
+                recipe.liked = false;
+                try{
+                    if (!snapshot.child("PeopleLike").child(user.id).getValue().toString().equals("")){
+                        recipe.liked = true;
+                    }
+                }catch (Exception e){
+                    Log.e("Recipe Fragment","No Like");
+                }
                 recipe.imageName = snapshot.child("ImageName").getValue().toString();
                 recipe.imageType = snapshot.child("ImageType").getValue().toString();
-                recipe.totalLike =  Integer.parseInt(snapshot.child("Like").getValue().toString());
-                recipe.totalTime =  Integer.parseInt(snapshot.child("TotalTime").getValue().toString());
+                recipe.totalLike = Integer.parseInt(snapshot.child("Like").getValue().toString());
+                recipe.totalTime = Integer.parseInt(snapshot.child("TotalTime").getValue().toString());
                 recipe.summary = snapshot.child("Summary").getValue().toString();
                 recipe.title = snapshot.child("Title").getValue().toString();
-                recipe.vegan =(boolean) snapshot.child("Vegan").getValue();
+                recipe.vegan = (boolean) snapshot.child("Vegan").getValue();
                 listRecipe.add(recipe);
                 listRecipeFilter.add(recipe);
                 listRecipeAdapter.newData(recipe);
@@ -219,7 +210,29 @@ public class RecipeFragment extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                Recipe recipe = new Recipe();
+                recipe.id = snapshot.child("Id").getValue().toString();
+                recipe.liked = false;
+                try{
+                    if (!snapshot.child("PeopleLike").child(user.id).getValue().toString().equals("")){
+                        recipe.liked = true;
+                    }
+                }catch (Exception e){
+                    Log.e("Recipe Fragment","No Like");
+                }
+                recipe.imageName = snapshot.child("ImageName").getValue().toString();
+                recipe.imageType = snapshot.child("ImageType").getValue().toString();
+                recipe.totalLike = Integer.parseInt(snapshot.child("Like").getValue().toString());
+                recipe.totalTime = Integer.parseInt(snapshot.child("TotalTime").getValue().toString());
+                recipe.summary = snapshot.child("Summary").getValue().toString();
+                recipe.title = snapshot.child("Title").getValue().toString();
+                recipe.vegan = (boolean) snapshot.child("Vegan").getValue();
+                for (int i = 0;i<listRecipe.size();i++){
+                    if (listRecipe.get(i).id == recipe.id){
+                        listRecipe.set(i,recipe);
+                        listRecipeAdapter.notifyItemChanged(i);
+                    }
+                }
             }
 
             @Override

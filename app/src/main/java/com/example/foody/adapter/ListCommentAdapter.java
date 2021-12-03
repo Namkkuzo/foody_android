@@ -46,6 +46,12 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
         return position;
     }
 
+    public void deleteItem (int i){
+        listIsLoadingAvatar.remove(i);
+        listIsLoadingImage.remove(i);
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if (position >= listIsLoadingImage.size()) {

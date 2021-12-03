@@ -8,6 +8,7 @@ import java.util.List;
 public class RecipeDetail {
 
     private String id;
+    private  boolean liked;
     private boolean cheap;
     private boolean dairyFree;
     private String description;
@@ -179,5 +180,13 @@ public class RecipeDetail {
 
     public void setImageRecipe(Bitmap imageRecipe) {
         this.imageRecipe = imageRecipe;
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
     }
 }

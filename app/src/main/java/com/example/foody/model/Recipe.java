@@ -7,6 +7,7 @@ public class Recipe {
     public String imageType;
     public Bitmap imageBitmap;
     public String id ;
+    public Boolean liked;
     public String title;
     public String summary;
     public int totalLike;
