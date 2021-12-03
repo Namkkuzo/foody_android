@@ -143,6 +143,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
                     else {
                         Intent detail = new Intent(view.getContext(), RecipeDetailActivity.class);
                         detail.putExtra("RecipeId", recipe.id);
+                        detail.putExtra("fromLocal", true );
                         detail.putExtra("ImageType", user.imageType);
                         detail.putExtra("ImageName", user.imageName);
                         detail.putExtra("UserName", user.userName);
@@ -155,6 +156,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
                 Intent detail = new Intent(view.getContext(), RecipeDetailActivity.class);
                 detail.putExtra("RecipeId", recipe.id);
                 detail.putExtra("ImageType", user.imageType);
+                detail.putExtra("fromLocal", false );
                 detail.putExtra("ImageName", user.imageName);
                 detail.putExtra("UserName", user.userName);
                 detail.putExtra("UserID", user.id);

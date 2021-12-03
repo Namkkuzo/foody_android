@@ -43,15 +43,17 @@ public class ViewPageAdapter extends FragmentStateAdapter {
     CommentFragment commentFragment;
     OverviewFragment overviewFragment;
     DatabaseReference mReference;
+    Boolean fromLocal;
 
-    public ViewPageAdapter(@NonNull FragmentActivity fragmentActivity, Recipe recipe, User user) {
+    public ViewPageAdapter(@NonNull FragmentActivity fragmentActivity, Recipe recipe, User user, Boolean fromLocal ) {
         super(fragmentActivity);
+        this.fromLocal = fromLocal;
         this.recipe = recipe;
         this.user = user;
         mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
-        ingredientFragment = new IngredientFragment(recipe.id);
+        ingredientFragment = new IngredientFragment(recipe.id, fromLocal);
         commentFragment =  new CommentFragment(recipe, user);
-        overviewFragment =  new OverviewFragment(recipe.id);
+        overviewFragment =  new OverviewFragment(recipe.id, fromLocal);
     }
 
 
@@ -74,5 +76,7 @@ public class ViewPageAdapter extends FragmentStateAdapter {
     }
 
 
-
+    public void deleteDataInDatabase() {
+        overviewFragment.deleteInDatabase();
+    }
 }

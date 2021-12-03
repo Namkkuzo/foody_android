@@ -25,7 +25,7 @@ import java.util.List;
 public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.ViewHolder> {
 
     List<CommentRecipe> data;
-    String recipeId ;
+    String recipeId;
     List<Boolean> listIsLoadingImage = new ArrayList<>();
     List<Boolean> listIsLoadingAvatar = new ArrayList<>();
 
@@ -42,36 +42,34 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
     }
 
     @Override
-    public int getItemViewType(int position)
-    {
+    public int getItemViewType(int position) {
         return position;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (position >= listIsLoadingImage.size()){
+        if (position >= listIsLoadingImage.size()) {
             int currentSize = listIsLoadingImage.size();
-            for(int i= currentSize;i<= position+1;i++){
+            for (int i = currentSize; i <= position + 1; i++) {
                 listIsLoadingImage.add(false);
             }
         }
-        if (position >= listIsLoadingAvatar.size()){
+        if (position >= listIsLoadingAvatar.size()) {
             int currentSize = listIsLoadingAvatar.size();
-            for(int i= currentSize;i<= position+1;i++){
+            for (int i = currentSize; i <= position + 1; i++) {
                 listIsLoadingAvatar.add(false);
             }
         }
-        final  CommentRecipe  comment = data.get(position);
+        final CommentRecipe comment = data.get(position);
         holder.author.setText(comment.author.userName);
         holder.content.setText(comment.content);
-        if (comment.content.equals("")){
+        if (comment.content.equals("")) {
             holder.content.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             holder.content.setVisibility(View.VISIBLE);
         }
         if (comment.imageName != null) {
-            if (!listIsLoadingImage.get(position)){
+            if (!listIsLoadingImage.get(position)) {
                 try {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference storageReference = storage.getReference();
@@ -81,8 +79,8 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
                         Bitmap bitmapAvatar = BitmapFactory.decodeFile(localFileAvatar.getAbsolutePath());
                         Log.e("listcomment", " get image " + comment.imageName + " Success");
                         holder.image.setImageBitmap(bitmapAvatar);
-                        data.get(position).Image= bitmapAvatar;
-                        listIsLoadingImage.set(position,true);
+                        data.get(position).Image = bitmapAvatar;
+                        listIsLoadingImage.set(position, true);
                     }).addOnFailureListener(e -> {
                         Log.e("listcomment", " get image " + comment.imageName + " fail");
                     });
@@ -90,7 +88,7 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 holder.image.setImageBitmap(data.get(position).Image);
             }
         } else {
@@ -98,9 +96,9 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
         }
 
         if (comment.author.imageName != null) {
-            if (!listIsLoadingAvatar.get(position)){
+            if (!listIsLoadingAvatar.get(position)) {
                 try {
-                    final String name = comment.author.imageName ;
+                    final String name = comment.author.imageName;
                     final String type = comment.author.imageType;
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference storageReference = storage.getReference();
@@ -110,7 +108,7 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
                         Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
                         Log.e("ListRecipeAdapter", " get image profile " + comment.imageName + " Success");
                         holder.avatar.setImageBitmap(bitmap);
-                        listIsLoadingAvatar.set(position,true);
+                        listIsLoadingAvatar.set(position, true);
                         data.get(position).author.image = bitmap;
                     }).addOnFailureListener(e -> {
                         Log.e("ListRecipeAdapter", " get image profile " + comment.imageName + " fail");
@@ -119,7 +117,7 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 holder.avatar.setImageBitmap(data.get(position).author.image);
             }
         }
@@ -133,6 +131,7 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView avatar, image;
+
         public TextView content, author;
 
         public ViewHolder(@NonNull View itemView) {
@@ -141,6 +140,8 @@ public class ListCommentAdapter extends RecyclerView.Adapter<ListCommentAdapter.
             image = itemView.findViewById(R.id.item_image_comment);
             content = itemView.findViewById(R.id.item_content_comment);
             author = itemView.findViewById(R.id.item_user_name_comment);
+
+
         }
     }
 }

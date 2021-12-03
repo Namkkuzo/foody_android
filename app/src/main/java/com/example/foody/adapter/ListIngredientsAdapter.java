@@ -35,15 +35,15 @@ import java.util.List;
 
 public class ListIngredientsAdapter extends RecyclerView.Adapter<ListIngredientsAdapter.ViewHolder>  {
 
-//    public interface OnBindCallback {
-//        void onViewBound(ListRecipeAdapter.ViewHolder viewHolder, int position);
-//    }
 
     private final List<Ingredients> data;
     Context mContext ;
     String recipeId;
-    public ListIngredientsAdapter(List<Ingredients> ingredients, String id ) {
+    Boolean fromLocal ;
+    List<Boolean> listIsLoadingIngredient = new ArrayList<>();
+    public ListIngredientsAdapter(List<Ingredients> ingredients, String id ,Boolean fromLocal) {
         this.data = ingredients;
+        this.fromLocal = fromLocal;
         recipeId = id;
     }
 
@@ -64,86 +64,37 @@ public class ListIngredientsAdapter extends RecyclerView.Adapter<ListIngredients
     @Override
     public void onBindViewHolder(@NonNull ListIngredientsAdapter.ViewHolder holder, int position) {
         final Ingredients ingredients = data.get(position);
-//        FirebaseStorage storage = FirebaseStorage.getInstance();
-//        StorageReference storageReference = storage.getReference();
-//        StorageReference reference = storageReference.child("ImageRecipe/" + recipeId + "/Ingredients/"+ingredients.getId() + ingredients.getImageName() + "." + ingredients.getImageType());
-//        try {
-//            final File localFile = File.createTempFile(ingredients.getImageName(), ingredients.getImageType());
-//            reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
-//                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-//                ingredients.setImageBitmap(bitmap);
-//                listIngredientsAdapter.notifyDataSetChanged();
-//            }).addOnFailureListener(e -> {
-//                Log.e("ListRecipeAdapter", " get image  fail");
-//            });
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        if (position >= listIsLoadingIngredient.size()){
+            int currentSize = listIsLoadingIngredient.size();
+            for(int i= currentSize;i<= position+1;i++){
+                listIsLoadingIngredient.add(false);
+            }
+        }
+        if (!listIsLoadingIngredient.get(position) && !fromLocal){
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageReference = storage.getReference();
+            StorageReference reference = storageReference.child("ImageRecipe/" + recipeId + "/Ingredients/"+ ingredients.getImageName() + "." + ingredients.getImageType());
+            try {
+                final File localFile = File.createTempFile(ingredients.getImageName(), ingredients.getImageType());
+                reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
+                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                    Log.e("ListRecipeAdapter", " get image " + position + "Success");
+                    data.get(position).setImageBitmap(bitmap);
+                    holder.imageIngredients.setImageBitmap(bitmap);
+                    listIsLoadingIngredient.set(position,true);
+                }).addOnFailureListener(e -> {
+                    Log.e("ListRecipeAdapter", " get image " + position + "fail");
+                });
 
-
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference();
-        StorageReference reference = storageReference.child("ImageRecipe/" + recipeId + "/Ingredients/"+ ingredients.getImageName() + "." + ingredients.getImageType());
-        try {
-            final File localFile = File.createTempFile(ingredients.getImageName(), ingredients.getImageType());
-            reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
-                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                Log.e("ListRecipeAdapter", " get image " + position + "Success");
-                holder.imageIngredients.setImageBitmap(bitmap);
-            }).addOnFailureListener(e -> {
-                Log.e("ListRecipeAdapter", " get image " + position + "fail");
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else {
+            holder.imageIngredients.setImageBitmap(ingredients.getImageBitmap());
         }
 
         holder.title.setText(ingredients.getName());
         holder.weight.setText(ingredients.getWeight()+ingredients.getUnit());
-
-
-//        int index = position;
-//        holder.layout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void  onClick(View view) {
-//                Drawable  viewColor =  holder.layout.getBackground();
-//                if (type == Contain.LIST_FAVORITE){
-//                    if(((ColorDrawable) viewColor).getColor()== Color.parseColor("#ffffff") && totalPick>0 ){
-//                        holder.layout.setBackgroundColor(Color.parseColor("#efe8ff"));
-//                        totalPick ++;
-//                        picked.set(index, recipe.id);
-//                    }else {
-//                        holder.layout.setBackgroundColor(Color.parseColor("#ffffff"));
-//                        picked.set(index, "");
-//                        totalPick--;
-//                    }
-//                }else{
-//                    //go to detail in here
-//                    Intent detail = new Intent(view.getContext(), RecipeDetailActivity.class);
-//                    detail.putExtra("RecipeId", recipe.id);
-//                    ((Activity)mContext).startActivityForResult(detail,type);
-//                }
-//                notifyDataSetChanged();
-//            }
-//        });
-
-//        holder.layout.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                Drawable  viewColor =  holder.layout.getBackground();
-//                if (type == Contain.LIST_FAVORITE) {
-//                    int color = ((ColorDrawable) viewColor).getColor();
-//                    if( color== Color.parseColor("#ffffff") && totalPick==0){
-//                        holder.layout.setBackgroundColor(Color.parseColor("#efe8ff"));
-//                        picked.set(index,recipe.id);
-//                        totalPick++;
-//                    }
-//                }
-//                return true;
-//            }
-//        });
 
     }
 
