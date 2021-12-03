@@ -61,8 +61,8 @@ public class RecipeFragment extends Fragment {
     Toolbar toolbar;
     ImageView imageAvatar;
     DatabaseReference mReference;
-    private RecyclerView recyclerView;
-    private ListRecipeAdapter listRecipeAdapter;
+    RecyclerView recyclerView;
+    ListRecipeAdapter listRecipeAdapter;
     List<Recipe> listRecipe;
     List<Recipe> listRecipeFilter;
     DatabaseLocal dbHelper ;
@@ -78,8 +78,6 @@ public class RecipeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        listRecipe = new ArrayList<Recipe> ();
-        listRecipeFilter = new ArrayList<Recipe> ();
     }
 
 
@@ -135,17 +133,18 @@ public class RecipeFragment extends Fragment {
         listRecipeAdapter.newListData(listRecipeFilter);
     }
 
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_recipe, container, false);
         mapview();
+        listRecipe = new ArrayList<Recipe> ();
+        listRecipeFilter = new ArrayList<Recipe> ();
         LinearLayoutManager myLayout = new LinearLayoutManager(getContext());
         myLayout.setStackFromEnd(false);
         recyclerView.setLayoutManager(myLayout);
-        recyclerView.setHasFixedSize(true);
-        listRecipeAdapter = new ListRecipeAdapter(Contain.LIST_RECIPE, user);
+        listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_RECIPE, user);
         recyclerView.setAdapter(listRecipeAdapter);
         getListRecipe();
         return view;
@@ -204,8 +203,7 @@ public class RecipeFragment extends Fragment {
                 recipe.title = snapshot.child("Title").getValue().toString();
                 recipe.vegan = (boolean) snapshot.child("Vegan").getValue();
                 listRecipe.add(recipe);
-                listRecipeFilter.add(recipe);
-                listRecipeAdapter.newData(recipe);
+                listRecipeAdapter.notifyItemInserted(listRecipe.size()-1);
             }
 
             @Override
