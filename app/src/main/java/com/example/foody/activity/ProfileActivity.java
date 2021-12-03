@@ -67,11 +67,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadImgClient(User user) {
-<<<<<<< HEAD
-        if (user.imageName.isEmpty() && !user.imageType.isEmpty()){
-=======
+
         if (user.imageName != null && !user.imageName.isEmpty()){
->>>>>>> ca170e306e72760c79d42135b203e7d0a4761d4a
+
             try {
                 final String name = user.imageName;
                 final String type = user.imageType;

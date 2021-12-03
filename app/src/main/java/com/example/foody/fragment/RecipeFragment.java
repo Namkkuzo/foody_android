@@ -42,7 +42,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class RecipeFragment extends Fragment {
@@ -53,6 +58,7 @@ public class RecipeFragment extends Fragment {
     private RecyclerView recyclerView;
     private ListRecipeAdapter  listRecipeAdapter;
     List<Recipe> listRecipe;
+    List<Recipe> listRecipeFilter;
     DatabaseLocal dbHelper ;
     SQLiteDatabase db ;
 
@@ -67,7 +73,7 @@ public class RecipeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         listRecipe = new ArrayList<Recipe> ();
-
+        listRecipeFilter = new ArrayList<Recipe> ();
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -99,25 +105,51 @@ public class RecipeFragment extends Fragment {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
         bottomSheetDialog.setContentView(R.layout.filter);
 
-        LinearLayout copy = bottomSheetDialog.findViewById(R.id.copyLinearLayout);
-        LinearLayout share = bottomSheetDialog.findViewById(R.id.shareLinearLayout);
-        LinearLayout upload = bottomSheetDialog.findViewById(R.id.uploadLinearLaySout);
-        LinearLayout download = bottomSheetDialog.findViewById(R.id.download);
-        LinearLayout delete = bottomSheetDialog.findViewById(R.id.delete);
+        LinearLayout filterTime = bottomSheetDialog.findViewById(R.id.filter_time);
+        LinearLayout filterVegan = bottomSheetDialog.findViewById(R.id.filter_vegan);
+        LinearLayout filterLike = bottomSheetDialog.findViewById(R.id.filter_like);
+        LinearLayout listAll = bottomSheetDialog.findViewById(R.id.list_all);
 
+        filterLike.setOnClickListener(v -> {
+            filterByLike();
+            bottomSheetDialog.dismiss();
+        });
 
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(getApplicationContext(), "Share is Clicked", Toast.LENGTH_LONG).show();
-                bottomSheetDialog.dismiss();
-            }
+        filterVegan.setOnClickListener(v -> {
+            filterByVegan();
+            bottomSheetDialog.dismiss();
+        });
+
+        filterTime.setOnClickListener(v -> {
+            filterByTime();
+            bottomSheetDialog.dismiss();
+        });
+
+        listAll.setOnClickListener(v -> {
+            listRecipeAdapter.newListData(listRecipe);
+            bottomSheetDialog.dismiss();
         });
 
         bottomSheetDialog.show();
     }
 
+    private void filterByLike(){
+        listRecipeFilter.sort(Comparator.comparing(a -> a.totalLike));
+        listRecipeAdapter.newListData(listRecipeFilter);
+    }
 
+    private void filterByVegan(){
+        List listVegan = listRecipeFilter.stream().filter(c -> c.vegan == true).collect(Collectors.toList());
+        listRecipeAdapter.newListData(listVegan);
+    }
+
+    // tang dan
+    private void filterByTime(){
+        listRecipeFilter.sort(Comparator.comparing(a -> a.totalTime));
+        // desc -- giam dan
+        Collections.reverse(listRecipeFilter);
+        listRecipeAdapter.newListData(listRecipeFilter);
+    }
 
 
     @Override
@@ -181,6 +213,7 @@ public class RecipeFragment extends Fragment {
                 recipe.title = snapshot.child("Title").getValue().toString();
                 recipe.vegan =(boolean) snapshot.child("Vegan").getValue();
                 listRecipe.add(recipe);
+                listRecipeFilter.add(recipe);
                 listRecipeAdapter.newData(recipe);
             }
 

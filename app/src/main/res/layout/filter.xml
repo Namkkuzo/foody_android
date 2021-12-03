@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/download"
+        android:id="@+id/filter_time"
         android:background="?android:attr/selectableItemBackground"
         android:padding="8dp">
 
@@ -21,62 +21,62 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Download File"
             android:layout_gravity="center_vertical"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:text="Thời gian" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/filter_vegan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/shareLinearLayout"
         android:background="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
         android:padding="8dp">
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_vegan"
-            android:layout_margin="8dp"/>
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_vegan" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Share"
             android:layout_gravity="center_vertical"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:text="Vegan" />
 
     </LinearLayout>
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:id="@+id/uploadLinearLaySout"-->
+<!--        android:background="?android:attr/selectableItemBackground"-->
+<!--        android:padding="8dp">-->
+
+<!--        <ImageView-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="24dp"-->
+<!--            android:src="@drawable/ic_launcher_foreground"-->
+<!--            android:layout_margin="8dp"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Upload To Google Drive"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:padding="8dp"/>-->
+
+<!--    </LinearLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/uploadLinearLaySout"
-        android:background="?android:attr/selectableItemBackground"
-        android:padding="8dp">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_launcher_foreground"
-            android:layout_margin="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upload To Google Drive"
-            android:layout_gravity="center_vertical"
-            android:padding="8dp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/copyLinearLayout"
+        android:id="@+id/filter_like"
         android:background="?android:attr/selectableItemBackground"
         android:padding="8dp">
 
@@ -89,7 +89,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Copy Link"
+            android:text="Yêu thích"
             android:layout_gravity="center_vertical"
             android:padding="8dp"/>
     </LinearLayout>
@@ -98,7 +98,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/delete"
+        android:id="@+id/list_all"
         android:background="?android:attr/selectableItemBackground"
         android:padding="8dp">
 
@@ -111,7 +111,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete File Selection"
+            android:text="Hiển thị toàn bộ"
             android:layout_gravity="center_vertical"
             android:padding="8dp"/>
     </LinearLayout>
