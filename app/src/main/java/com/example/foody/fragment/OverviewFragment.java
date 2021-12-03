@@ -116,6 +116,7 @@ public class OverviewFragment extends Fragment {
         tvTotalLike = (TextView) view.findViewById(R.id.totalLike) ;
         tvTotalTime = (TextView) view.findViewById(R.id.totalTime) ;
         dialog = new ProgressDialog(getContext());
+        dialog.setTitle("Loading...");
     }
     void getRecipeDetailFromLocal (String recipeId){
         DatabaseLocal dbHelper = new DatabaseLocal(getContext());
