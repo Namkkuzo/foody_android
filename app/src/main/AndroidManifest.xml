@@ -29,16 +29,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Foody">
+
         <activity
-            android:parentActivityName=".activity.MainActivity"
             android:name=".activity.RecipeDetailActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="false" />
         <activity
             android:name=".activity.Register"
             android:exported="true" />
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme.ProfileTheme"></activity>
         <activity
             android:name=".activity.LoginActivity"
             android:exported="true">
