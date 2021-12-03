@@ -56,18 +56,18 @@ public class ProfileActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_profile);
         setSupportActionBar(toolbar);
         mapview();
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            userId = extras.getString("userId");
+        Intent result = getIntent();
+        if (result.hasExtra("userId")) {
+            userId = result.getStringExtra("userId");
         }
-        getUser(userId);
         setActionbar();
         setListenerView();
+        getUser(userId);
 
     }
 
     private void loadImgClient(User user) {
-        if (user.imageName != null || !user.imageName.isEmpty()){
+        if (user.imageName.isEmpty() && !user.imageType.isEmpty()){
             try {
                 final String name = user.imageName;
                 final String type = user.imageType;
@@ -82,7 +82,6 @@ public class ProfileActivity extends AppCompatActivity {
                     Log.e("Profile", " get image profile " + user.imageName + " fail");
                 });
             } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 
@@ -142,11 +141,11 @@ public class ProfileActivity extends AppCompatActivity {
                 try {
                     user.imageName = dataSnapshot.child("ImageName").getValue().toString();
                     user.imageType = dataSnapshot.child("ImageType").getValue().toString();
+                    loadImgClient(user);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("ProfileActivity","no image");
                 }
                 loadInfoUser(user);
-                loadImgClient(user);
             }
 
             @Override

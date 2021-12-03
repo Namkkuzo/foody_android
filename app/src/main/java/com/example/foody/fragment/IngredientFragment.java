@@ -48,9 +48,11 @@ public class IngredientFragment extends Fragment {
     private RecyclerView recyclerView;
     String recipeId ;
     private ListIngredientsAdapter listIngredientsAdapter;
+    Boolean fromLocal;
 
-    public IngredientFragment(String id) {
+    public IngredientFragment(String id, Boolean fromLocal) {
         this.recipeId = id;
+        this.fromLocal = fromLocal;
         // Required empty public constructor
     }
 
@@ -65,7 +67,11 @@ public class IngredientFragment extends Fragment {
         myLayout.setStackFromEnd(true);
         recyclerView.setLayoutManager(myLayout);
         recyclerView.setHasFixedSize(true);
-        getRecipeDetailByReID();
+        if (fromLocal){
+            getIngredientFromLocal();
+        }else {
+            getIngredientFromRemote();
+        }
         return view;
     }
 
@@ -81,7 +87,15 @@ public class IngredientFragment extends Fragment {
 
     }
 
-    void getRecipeDetailByReID(){
+    void getIngredientFromLocal (){
+        DatabaseLocal dbHelper = new DatabaseLocal(getContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        ingredientsList =  DatabaseLocal.getListIngredient( recipeId,db);
+        listIngredientsAdapter = new ListIngredientsAdapter(ingredientsList,recipeId, fromLocal);
+        recyclerView.setAdapter(listIngredientsAdapter);
+    }
+
+    void getIngredientFromRemote(){
         DatabaseReference mRecipeDetail = mReference.child("RecipeDetail").child(recipeId);
         mRecipeDetail.addValueEventListener(new ValueEventListener() {
             @Override
@@ -103,7 +117,7 @@ public class IngredientFragment extends Fragment {
 
                             ingredientsList.add(ingredients);
                         }
-                        listIngredientsAdapter = new ListIngredientsAdapter(ingredientsList,recipeId);
+                        listIngredientsAdapter = new ListIngredientsAdapter(ingredientsList,recipeId, fromLocal);
                         recyclerView.setAdapter(listIngredientsAdapter);
                     }
 

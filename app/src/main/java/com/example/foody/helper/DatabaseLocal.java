@@ -45,7 +45,7 @@ public class DatabaseLocal extends SQLiteOpenHelper {
     public static class RecipeIngredientTable {
         public static final String TABLE_NAME = "recipeIngredientTable";
         public static final String COLUMN_NAME_IMAGE = "image";
-        public static final String COLUMN_NAME_ID_INGREDIENT = "id";
+        public static final String COLUMN_NAME_ID_INGREDIENT = "idIngredient";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_UNIT = "unit";
         public static final String COLUMN_NAME_WEIGHT = "weight";
@@ -55,7 +55,7 @@ public class DatabaseLocal extends SQLiteOpenHelper {
     public static class RecipeInstructionTable {
         public static final String TABLE_NAME = "recipeInstructionTable";
         public static final String COLUMN_NAME_STEP = "step";
-        public static final String COLUMN_NAME_ACTION = "action";
+        public static final String COLUMN_NAME_ACTION = "buoc";
         public static final String ID_RECIPE = "id";
     }
 
@@ -77,7 +77,8 @@ public class DatabaseLocal extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_TABLE_RECIPE_INGREDIENT =
             "CREATE TABLE " + RecipeIngredientTable.TABLE_NAME + " (" +
-                    RecipeIngredientTable.ID_RECIPE + " TEXT ," +
+                    RecipeIngredientTable.COLUMN_NAME_ID_INGREDIENT + " TEXT ," +
+                    RecipeIngredientTable.ID_RECIPE + " TEXT , "+
                     RecipeIngredientTable.COLUMN_NAME_IMAGE + " BLOB," +
                     RecipeIngredientTable.COLUMN_NAME_UNIT + " TEXT," +
                     RecipeIngredientTable.COLUMN_NAME_WEIGHT + " TEXT," +
@@ -166,7 +167,8 @@ public class DatabaseLocal extends SQLiteOpenHelper {
         values.put(RecipeIngredientTable.COLUMN_NAME_WEIGHT, Integer.toString(ingredients.getWeight()));
         values.put(RecipeIngredientTable.COLUMN_NAME_ID_INGREDIENT,Integer.toString( ingredients.getId()));
         // Insert the new row, returning the primary key value of the new row
-        db.insert(RecipeIngredientTable.TABLE_NAME, null, values);
+        long  a =  db.insert(RecipeIngredientTable.TABLE_NAME, null, values);
+        Log.e(">>>>>>>>>>>>>>", Long.toString(a));
     }
     public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -191,8 +193,6 @@ public class DatabaseLocal extends SQLiteOpenHelper {
 
     public static ArrayList<Recipe> getListRecipe(SQLiteDatabase db ){
         ArrayList listRecipeFavorite = new ArrayList<Recipe>();
-
-
         Cursor cursor = db.query(
                 RecipeTable.TABLE_NAME,   // The table to query
                 null,             // The array of columns to return (pass null to get all)
@@ -230,6 +230,103 @@ public class DatabaseLocal extends SQLiteOpenHelper {
         }
         cursor.close();
         return listRecipeFavorite;
+    }
+
+    public static boolean haveRecipeInDataBase (String idRecipe, SQLiteDatabase db){
+        String query = "SELECT * FROM " + RecipeTable.TABLE_NAME + " WHERE " + RecipeTable.ID_RECIPE + " = '" + idRecipe+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        while (cursor.moveToFirst()){
+            return true;
+        }
+        return false;
+    }
+    public static RecipeDetail getRecipeById (String idRecipe, SQLiteDatabase db){
+        String query = "SELECT * FROM " + RecipeTable.TABLE_NAME + " WHERE " + RecipeTable.ID_RECIPE + " = '" + idRecipe+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        RecipeDetail detailRecipe = new RecipeDetail();
+        while (cursor.moveToNext()){
+            String id  = cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.ID_RECIPE));
+            String title  = cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_TITLE));
+            String summary  = cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_SUMMARY));
+            Boolean vegan  = Boolean.valueOf(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_VEGAN)));
+            int time  = Integer.parseInt(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_TIME)));
+            int like  = Integer.parseInt(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_LIKE)));
+            byte[] image  = cursor.getBlob(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_IMAGE));
+            Boolean cheap  = Boolean.valueOf(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_CHEAP)));
+            Boolean healthy  = Boolean.valueOf(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_HEALTHY)));
+            Boolean dairyFree  = Boolean.valueOf(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_DAIRY_FREE)));
+            Boolean glutenFree  = Boolean.valueOf(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_GLUTEN_FREE)));
+            Boolean vegetarian  = Boolean.valueOf(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeTable.COLUMN_NAME_VEGETARIAN)));
+            detailRecipe.setId(id);
+            detailRecipe.setTitle(title);
+            detailRecipe.setSummary(summary);
+            detailRecipe.setVegan(vegan);
+            detailRecipe.setTotalTime(time);
+            detailRecipe.setTotalLike(like);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            detailRecipe.setImageRecipe(bitmap);
+            detailRecipe.setCheap(cheap);
+            detailRecipe.setHealthy(healthy);
+            detailRecipe.setDairyFree(dairyFree);
+            detailRecipe.setGlutentFree(glutenFree);
+            detailRecipe.setVegetarian(vegetarian);
+
+        }
+        return  detailRecipe;
+    }
+    public static ArrayList<Process> getListProcess (String idRecipe, SQLiteDatabase db){
+        ArrayList<Process> listProcess = new ArrayList<>();
+        String query = "SELECT * FROM " + RecipeInstructionTable.TABLE_NAME + " WHERE " + RecipeInstructionTable.ID_RECIPE + " = '" + idRecipe+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        while (cursor.moveToNext()){
+            String action  = cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeInstructionTable.COLUMN_NAME_ACTION));
+            Process process = new Process();
+            int step  = Integer.parseInt(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeInstructionTable.COLUMN_NAME_STEP)));
+            process.setAction(action);
+            process.setStep(step);
+            listProcess.add(process);
+        }
+        return  listProcess;
+    }
+    public static ArrayList<Ingredients> getListIngredient (String idRecipe, SQLiteDatabase db){
+        ArrayList<Ingredients> listIngredient = new ArrayList<>();
+        String query = "SELECT * FROM " + RecipeIngredientTable.TABLE_NAME + " WHERE " + RecipeIngredientTable.ID_RECIPE + " = '" + idRecipe+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        while (cursor.moveToNext()){
+            String unit  = cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeIngredientTable.COLUMN_NAME_UNIT));
+            String name  = cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeIngredientTable.COLUMN_NAME_NAME));
+            int weight  = Integer.parseInt(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeIngredientTable.COLUMN_NAME_WEIGHT)));
+            int id  = Integer.parseInt(cursor.getString(
+                    cursor.getColumnIndexOrThrow(RecipeIngredientTable.COLUMN_NAME_ID_INGREDIENT)));
+            byte[] image  = cursor.getBlob(
+                    cursor.getColumnIndexOrThrow(RecipeIngredientTable.COLUMN_NAME_IMAGE));
+            Ingredients ingredients = new Ingredients();
+            ingredients.setId(id);
+            ingredients.setWeight(weight);
+            ingredients.setUnit(unit);
+            ingredients.setName(name);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            ingredients.setImageBitmap(bitmap);
+            listIngredient.add((ingredients));
+        }
+        return  listIngredient;
     }
 
 }

@@ -8,6 +8,8 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +22,8 @@ import com.example.foody.adapter.ViewPageAdapter;
 import com.example.foody.fragment.CommentFragment;
 import com.example.foody.fragment.IngredientFragment;
 import com.example.foody.fragment.OverviewFragment;
+import com.example.foody.helper.Contain;
+import com.example.foody.helper.DatabaseLocal;
 import com.example.foody.model.Recipe;
 import com.example.foody.model.User;
 import com.google.android.material.tabs.TabLayout;
@@ -31,8 +35,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
     public static final int HAVE_CHANGE_DATABASE = 1;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
+    Boolean isFavorite = false;
     private  Recipe recipe ;
-    private  boolean formLocal;
+    private  boolean formLocal = false;
     User user;
     ViewPageAdapter adapter;
     private ImageView backIcon , favoriteIcon ;
@@ -41,11 +46,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
+        setActionbar();
         getData();
-        formLocal = false;
         tabLayout = findViewById(R.id.tabRecipeDetail);
         viewPager2 = findViewById(R.id.viewPagerDetail);
-        adapter = new ViewPageAdapter(this, recipe, user);
+        adapter = new ViewPageAdapter(this, recipe, user,formLocal);
         viewPager2.setAdapter(adapter);
 
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -53,12 +58,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 switch (position){
                     case 0: tab.setText("Overview"); break;
-                    case 1: tab.setText("Ingren"); break;
+                    case 1: tab.setText("Ingredient"); break;
                     case 2: tab.setText("Comment"); break;
                 }
             }
         }).attach();
-        setActionbar();
 
     }
 
@@ -78,14 +82,20 @@ public class RecipeDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setResult(HAVE_CHANGE_DATABASE);
-                adapter.saveDataToDatabase();
+                if (isFavorite){
+                    adapter.deleteDataInDatabase();
+                    favoriteIcon.setImageResource(R.drawable.ic_baseline_star_24);
+                }else{
+                    adapter.saveDataToDatabase();
+                    favoriteIcon.setImageResource(R.drawable.ic_star_yellow);
+                }
+
             }
         });
 
     }
 
-    private void onOptionsItemSelected() {
-    }
+
 
     void getData(){
         recipe = new Recipe();
@@ -107,7 +117,18 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (result.hasExtra("UserID")){
             user.id = result.getStringExtra("UserID");
         }
-
+        if (result.hasExtra("fromLocal")){
+            formLocal = result.getBooleanExtra("fromLocal", false);
+        }
+        DatabaseLocal dbHelper = new DatabaseLocal(RecipeDetailActivity.this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        isFavorite = DatabaseLocal.haveRecipeInDataBase(recipe.id,db);
+        if(isFavorite){
+            favoriteIcon.setImageResource(R.drawable.ic_star_yellow);
+        }
+        else {
+            favoriteIcon.setImageResource(R.drawable.ic_baseline_star_24);
+        }
     }
 
     @Override

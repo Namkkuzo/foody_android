@@ -1,5 +1,6 @@
 package com.example.foody.fragment;
 
+import android.app.ProgressDialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,12 +9,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -34,23 +37,31 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class OverviewFragment extends Fragment {
 
     View view;
     DatabaseReference mReference;
+    Boolean fromLocal;
     TextView tvDescription;
     TextView tvProcess;
+    TextView tvTotalTime;
+    TextView tvTotalLike;
+    ProgressDialog dialog;
     LinearLayout image ;
     RecipeDetail recipeDetail;
+    int sizeIngredientLoadedImage = 0;
+    Boolean loadedImageRecipe = false;
     String recipeId;
     RadioButton rdCheap,rdDairyFree, rdGlutent, rdHeathy, rdVegan, rdVegetarian;
 
 
-    public OverviewFragment(String id) {
+    public OverviewFragment(String id, Boolean fromLocal) {
         // Required empty public constructor
         recipeId= id;
+        this.fromLocal = fromLocal;
     }
 
 
@@ -61,6 +72,11 @@ public class OverviewFragment extends Fragment {
 
         }
 
+    }
+    public void deleteInDatabase() {
+        DatabaseLocal dbHelper = new DatabaseLocal(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        DatabaseLocal.deleteRecipe(db, recipeId);
     }
 
 
@@ -78,7 +94,13 @@ public class OverviewFragment extends Fragment {
         mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
         recipeDetail = new RecipeDetail();
         mapView();
-        getRecipeDetailByReID(this.recipeId);
+        dialog.show();
+        if (fromLocal){
+            getRecipeDetailFromLocal(this.recipeId);
+        }else {
+            getRecipeDetailFromRemote(this.recipeId);
+        }
+
         return view;
     }
     void mapView (){
@@ -91,9 +113,47 @@ public class OverviewFragment extends Fragment {
         rdHeathy = view.findViewById(R.id.rdHealthy);
         tvProcess = view.findViewById(R.id.tvStep);
         tvDescription = (TextView) view.findViewById(R.id.tvDescription);
+        tvTotalLike = (TextView) view.findViewById(R.id.totalLike) ;
+        tvTotalTime = (TextView) view.findViewById(R.id.totalTime) ;
+        dialog = new ProgressDialog(getContext());
+    }
+    void getRecipeDetailFromLocal (String recipeId){
+        DatabaseLocal dbHelper = new DatabaseLocal(getContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        recipeDetail  =  DatabaseLocal.getRecipeById( recipeId,db);
+        recipeDetail.setProcessList(DatabaseLocal.getListProcess(recipeId,db));
+        setViewFromData();
+
+        BitmapDrawable background = new BitmapDrawable(recipeDetail.getImageRecipe());
+        image.setBackgroundDrawable(background);
+        loadedImageRecipe = true;
+        if ( loadedImageRecipe){
+            dialog.dismiss();
+        }
+        String  str = "";
+        recipeDetail.getProcessList().sort(Comparator.comparing(Process::getStep));
+        for (Process item : recipeDetail.getProcessList()){
+            str += "- Bước " + item.getStep() + " : " + item.getAction() + "\n";
+        }
+        tvProcess.setText(str);
+
     }
 
-    void getRecipeDetailByReID(String recipeId){
+
+    void setViewFromData (){
+        rdCheap.setChecked(recipeDetail.isCheap());
+        rdVegetarian.setChecked(recipeDetail.isVegetarian());
+        rdDairyFree.setChecked(recipeDetail.isDairyFree());
+        rdGlutent.setChecked(recipeDetail.isGlutentFree());
+        rdVegan.setChecked(recipeDetail.isVegan());
+        rdHeathy.setChecked(recipeDetail.isHealthy());
+        tvDescription.setText(recipeDetail.getDescription());
+        tvTotalTime.setText(Integer.toString(recipeDetail.getTotalTime()));
+        tvTotalLike.setText(Integer.toString(recipeDetail.getTotalLike()));
+
+    }
+
+    void getRecipeDetailFromRemote(String recipeId){
         DatabaseReference mRecipeDetail = mReference.child("RecipeDetail").child(recipeId);
         mRecipeDetail.addValueEventListener(new ValueEventListener() {
             @Override
@@ -115,14 +175,9 @@ public class OverviewFragment extends Fragment {
                 recipeDetail.setVegetarian((boolean) snapshot.child("Vegetarian").getValue());
                 recipeDetail.setVegetarian((boolean) snapshot.child("Vegetarian").getValue());
 
-                rdCheap.setChecked(recipeDetail.isCheap());
-                rdVegetarian.setChecked(recipeDetail.isVegetarian());
-                rdDairyFree.setChecked(recipeDetail.isDairyFree());
-                rdGlutent.setChecked(recipeDetail.isGlutentFree());
-                rdVegan.setChecked(recipeDetail.isVegan());
-                rdHeathy.setChecked(recipeDetail.isHealthy());
-                tvDescription.setText(recipeDetail.getDescription());
+                setViewFromData();
 
+                List<Ingredients> ingredientsList = new ArrayList<>();
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageReference = storage.getReference();
                 StorageReference reference = storageReference.child("ImageRecipe/" + recipeDetail.getRecipeId() + "/" + recipeDetail.getImageName() + "." + recipeDetail.getImageType());
@@ -133,8 +188,16 @@ public class OverviewFragment extends Fragment {
                         recipeDetail.setImageRecipe(bitmap);
                         BitmapDrawable background = new BitmapDrawable(bitmap);
                         image.setBackgroundDrawable(background);
+                        loadedImageRecipe = true;
+                        if (sizeIngredientLoadedImage == ingredientsList.size() && loadedImageRecipe){
+                            dialog.dismiss();;
+                        }
                     }).addOnFailureListener(e -> {
                         Log.e("ListRecipeAdapter", " get image  fail");
+                        loadedImageRecipe = true;
+                        if (sizeIngredientLoadedImage == ingredientsList.size() && loadedImageRecipe){
+                            dialog.dismiss();;
+                        }
                     });
 
                 } catch (IOException e) {
@@ -145,7 +208,6 @@ public class OverviewFragment extends Fragment {
                 mIngredients.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot1) {
-                        List<Ingredients> ingredientsList = new ArrayList<>();
                         for (DataSnapshot itemIng : snapshot1.getChildren()){
                             Ingredients ingredients = new Ingredients();
                             ingredients.setId(Integer.parseInt(itemIng.child("Id").getValue().toString()));
@@ -160,8 +222,16 @@ public class OverviewFragment extends Fragment {
                                 reference.getFile(localFile).addOnSuccessListener(downloadResult -> {
                                     Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
                                     ingredients.setImageBitmap(bitmap);
+                                    sizeIngredientLoadedImage ++;
+                                    if (sizeIngredientLoadedImage == ingredientsList.size() && loadedImageRecipe){
+                                        dialog.dismiss();;
+                                    }
                                 }).addOnFailureListener(e -> {
                                     Log.e("ListRecipeAdapter", " get image  fail");
+                                    sizeIngredientLoadedImage ++;
+                                    if (sizeIngredientLoadedImage == ingredientsList.size() && loadedImageRecipe){
+                                        dialog.dismiss();;
+                                    }
                                 });
 
                             } catch (IOException e) {
@@ -190,7 +260,10 @@ public class OverviewFragment extends Fragment {
                             process.setAction(itemProcess.child("Action").getValue().toString());
                             process.setStep(Integer.parseInt(itemProcess.child("Step").getValue().toString()));
                             processList.add(process);
-                            str += "- Bước " + process.getStep() + " : " + process.getAction() + "\n";
+                        }
+                        processList.sort(Comparator.comparing(Process::getStep));
+                        for (Process item : processList){
+                            str += "- Bước " + item.getStep() + " : " + item.getAction() + "\n";
                         }
                         recipeDetail.setProcessList(processList);
                         tvProcess.setText(str);
@@ -209,4 +282,5 @@ public class OverviewFragment extends Fragment {
             }
         });
     }
+
 }

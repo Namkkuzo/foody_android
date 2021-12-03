@@ -1,6 +1,6 @@
 package com.example.foody.model;
 
-public class Process {
+public class Process  {
     private int step;
     private String action;
 

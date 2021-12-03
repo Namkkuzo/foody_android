@@ -23,6 +23,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.foody.R;
 import com.example.foody.adapter.ListCommentAdapter;
@@ -62,6 +63,7 @@ public class CommentFragment extends Fragment {
     RecyclerView recyclerView;
     ConstraintLayout layoutImage ;
     EditText comment;
+    TextView emptyText;
     View view;
     Uri uri ;
     Recipe recipe;
@@ -92,6 +94,14 @@ public class CommentFragment extends Fragment {
         listComment = new ArrayList<>();
         listCommentAdapter = new ListCommentAdapter(listComment,recipe.id);
         recyclerView.setAdapter(listCommentAdapter);
+        if (listComment.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            emptyText.setVisibility(View.VISIBLE);
+        }
+        else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyText.setVisibility(View.GONE);
+        }
         setListenerView();
         getListComment();
         return view;
@@ -104,6 +114,7 @@ public class CommentFragment extends Fragment {
         camera = view.findViewById(R.id.button_camera);
         send = view.findViewById(R.id.button_send);
         send.setImageResource(R.drawable.ic_send);
+        emptyText = view.findViewById(R.id.empty_text);
         cancel = view.findViewById(R.id.button_cancel);
         comment = view.findViewById(R.id.txt_comment);
     }
@@ -200,6 +211,14 @@ public class CommentFragment extends Fragment {
                 commentRecipe.author.id = snapshot.child("Author").getValue().toString();
                 listComment.add(commentRecipe);
                 listCommentAdapter.notifyItemInserted(listComment.size()-1);
+                if (listComment.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    emptyText.setVisibility(View.VISIBLE);
+                }
+                else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyText.setVisibility(View.GONE);
+                }
             }
 
             @Override

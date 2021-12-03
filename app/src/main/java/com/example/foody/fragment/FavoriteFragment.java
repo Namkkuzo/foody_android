@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.foody.R;
 import com.example.foody.adapter.ListRecipeAdapter;
@@ -34,6 +35,7 @@ public class FavoriteFragment extends Fragment {
     View view;
     DatabaseReference mReference;
     User user ;
+    TextView emptyText;
     private RecyclerView recyclerView;
     private ListRecipeAdapter listRecipeAdapter;
     List<Recipe> listRecipe;
@@ -62,6 +64,7 @@ public class FavoriteFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.delete:
                 boolean haveUpdate  = false;
+//              getContext().getDatabasePath(DatabaseLocal.DATABASE_NAME).delete();
                 DatabaseLocal dbHelper = new DatabaseLocal(getContext());
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 for (String  id :listRecipeAdapter.getListPicked()) {
@@ -97,6 +100,7 @@ public class FavoriteFragment extends Fragment {
     void mapview(){
         recyclerView = view.findViewById( R.id.list_favorite);
         mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference();
+        emptyText = view.findViewById(R.id.empty_text);
     }
 
 
@@ -106,6 +110,14 @@ public class FavoriteFragment extends Fragment {
         listRecipe =  DatabaseLocal.getListRecipe(db);
         listRecipeAdapter = new ListRecipeAdapter(Contain.LIST_FAVORITE, user);
         recyclerView.setAdapter(listRecipeAdapter);
+        if (listRecipe.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            emptyText.setVisibility(View.VISIBLE);
+        }
+        else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyText.setVisibility(View.GONE);
+        }
         listRecipeAdapter.newListData(listRecipe);
     }
 }
