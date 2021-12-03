@@ -62,34 +62,7 @@ public class FavoriteFragment extends Fragment {
         listRecipe = new ArrayList<Recipe>();
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.menu_favorite, menu);  // Use filter.xml from step 1
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()){
-//            case R.id.delete:
-//                boolean haveUpdate  = false;
-////              getContext().getDatabasePath(DatabaseLocal.DATABASE_NAME).delete();
-//                DatabaseLocal dbHelper = new DatabaseLocal(getContext());
-//                SQLiteDatabase db = dbHelper.getWritableDatabase();
-//                for (String  id :listRecipeAdapter.getListPicked()) {
-//                    if(!id.equals("")){
-//
-//                        DatabaseLocal.deleteRecipe(db,id);
-//                        haveUpdate = true;
-//                    }
-//                }
-//                if (!haveUpdate) {
-//                    DatabaseLocal.deleteRecipe(db,null);
-//                }
-//                getListRecipe();
-//                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -142,7 +115,7 @@ public class FavoriteFragment extends Fragment {
         DatabaseLocal dbHelper = new DatabaseLocal(getContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         listRecipe =  DatabaseLocal.getListRecipe(db);
-        listRecipeAdapter = new ListRecipeAdapter(Contain.LIST_FAVORITE, user);
+        listRecipeAdapter = new ListRecipeAdapter(listRecipe,Contain.LIST_FAVORITE, user);
         recyclerView.setAdapter(listRecipeAdapter);
         if (listRecipe.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
@@ -152,6 +125,5 @@ public class FavoriteFragment extends Fragment {
             recyclerView.setVisibility(View.VISIBLE);
             emptyText.setVisibility(View.GONE);
         }
-        listRecipeAdapter.newListData(listRecipe);
     }
 }
