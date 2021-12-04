@@ -103,7 +103,6 @@
                         android:background="@drawable/profile_bk" />
 
                     <TextView
-                        android:visibility="gone"
                         android:id="@+id/change_photo"
                         style="@style/profileStyledBackButton"
                         android:text="Đổi ảnh\nĐại điện" />
