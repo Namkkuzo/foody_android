@@ -1,6 +1,7 @@
 package com.example.foody.fragment;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -12,14 +13,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -54,12 +61,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class RecipeFragment extends Fragment {
+public class RecipeFragment extends Fragment  {
 
     View view;
     User user;
+    boolean inputSearchShowing= false;
     Toolbar toolbar;
     ImageView imageAvatar;
+    EditText searchView;
     DatabaseReference mReference;
     RecyclerView recyclerView;
     ListRecipeAdapter listRecipeAdapter;
@@ -152,6 +161,20 @@ public class RecipeFragment extends Fragment {
 
 
     void mapview() {
+        searchView = view.findViewById(R.id.searchView);
+        searchView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN)
+                    if ((keyCode == KeyEvent.KEYCODE_DPAD_CENTER) ||
+                            (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        //do your action here
+                        Log.e("Print ", searchView.getText().toString());
+                        return true;
+                    }
+                return false;
+            }
+        } );
         recyclerView = view.findViewById(R.id.list_recipe);
         imageAvatar = view.findViewById(R.id.image_user);
         imageAvatar.setOnClickListener(view -> {
@@ -171,6 +194,19 @@ public class RecipeFragment extends Fragment {
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         getActivity().finish();
                         return true;
+                    case  R.id.search:
+                        if (!inputSearchShowing){
+                            item.setIcon(R.drawable.ic_cancel);
+                            searchView.setVisibility(View.VISIBLE);
+                            inputSearchShowing = true;
+                        }
+                        else {
+                            item.setIcon(R.drawable.ic_baseline_search_24);
+                            searchView.setVisibility(View.GONE);
+                            inputSearchShowing=false;
+                        }
+
+                        return true;
                     default:
                         showBottomSheetDialog();
                         return true;
@@ -178,6 +214,12 @@ public class RecipeFragment extends Fragment {
             }
         });
     }
+
+
+    void searchList (){
+
+    }
+
 
 
     void getListRecipe() {
@@ -249,4 +291,6 @@ public class RecipeFragment extends Fragment {
             }
         });
     }
+
+
 }

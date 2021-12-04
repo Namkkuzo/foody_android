@@ -33,6 +33,13 @@
                 android:background="@drawable/ic_default_avatar"
                 android:scaleType="centerCrop" />
         </androidx.cardview.widget.CardView>
+        <EditText
+            android:layout_width="250dp"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:id="@+id/searchView"
+            android:visibility="gone"
+            android:layout_height="match_parent"/>
     </androidx.appcompat.widget.Toolbar>
 
     <!-- TODO: Update blank fragment layout -->
