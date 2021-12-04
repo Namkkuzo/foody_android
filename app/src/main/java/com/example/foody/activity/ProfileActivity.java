@@ -102,12 +102,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setListenerView() {
 
-        camera.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            ProfileActivity.this.startActivityForResult(Intent.createChooser(intent, "Chọn Ảnh"), SELECT_IMAGE_CODE);
-        });
+//        camera.setOnClickListener(view -> {
+//            Intent intent = new Intent();
+//            intent.setType("image/*");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            ProfileActivity.this.startActivityForResult(Intent.createChooser(intent, "Chọn Ảnh"), SELECT_IMAGE_CODE);
+//        });
 
 //        imageUser.setOnClickListener(view -> {
 //
