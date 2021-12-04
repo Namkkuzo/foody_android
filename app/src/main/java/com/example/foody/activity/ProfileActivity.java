@@ -14,8 +14,10 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -57,6 +59,8 @@ public class ProfileActivity extends AppCompatActivity {
     String userId;
     CoordinatorLayout layout;
     Uri uri;
+    String fileNamePr = "";
+    String fileTypePr = "";
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadImgClient(User user) {
-        if (!user.imageName.isEmpty() && !user.imageType.isEmpty()){
+        if (!user.imageName.isEmpty() && !user.imageType.isEmpty()) {
             try {
                 final String name = user.imageName;
                 final String type = user.imageType;
@@ -105,9 +109,18 @@ public class ProfileActivity extends AppCompatActivity {
             ProfileActivity.this.startActivityForResult(Intent.createChooser(intent, "Chọn Ảnh"), SELECT_IMAGE_CODE);
         });
 
+        imageUser.setOnClickListener(view -> {
+
+            Intent detail = new Intent(ProfileActivity.this, ViewImage.class);
+            detail.putExtra("imageNamePr", fileNamePr);
+            detail.putExtra("imageTypePr", fileTypePr);
+            startActivity(detail);
+        });
+
     }
-    private void setDialog(boolean show){
-        if (show)dialog.show();
+
+    private void setDialog(boolean show) {
+        if (show) dialog.show();
         else dialog.dismiss();
     }
 
@@ -158,10 +171,14 @@ public class ProfileActivity extends AppCompatActivity {
                 try {
                     user.imageName = dataSnapshot.child("ImageName").getValue().toString();
                     user.imageType = dataSnapshot.child("ImageType").getValue().toString();
-                    Log.e("ProfileActivity","get avt thành công");
+                    Log.e("ProfileActivity", "get avt thành công");
+                    fileNamePr = user.imageName;
+                    fileTypePr = user.imageType;
+                    Log.e("FileName: ", fileNamePr);
+                    Log.e("FileType: ", fileTypePr);
                     loadImgClient(user);
                 } catch (Exception e) {
-                    Log.e("ProfileActivity","no image");
+                    Log.e("ProfileActivity", "no image");
                 }
                 loadInfoUser(user);
             }
@@ -192,12 +209,12 @@ public class ProfileActivity extends AppCompatActivity {
             task.addOnFailureListener(e -> {
                 Log.e("error aaaaaaaaaaaaaa", e.getMessage());
                 setDialog(false);
-                Toast.makeText(ProfileActivity.this,"Cập nhật thất bại",Toast.LENGTH_LONG).show();
+                Toast.makeText(ProfileActivity.this, "Cập nhật thất bại", Toast.LENGTH_LONG).show();
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Log.e(">>>>>>>>>>>>>>>>>>>>>", "succes");
-                    Toast.makeText(ProfileActivity.this,"Cập nhật thành công",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ProfileActivity.this, "Cập nhật thành công", Toast.LENGTH_LONG).show();
                     imageUser.setImageURI(uri);
                     setDialog(false);
 //                    dialog.dismiss();
@@ -210,5 +227,11 @@ public class ProfileActivity extends AppCompatActivity {
         ContentResolver cr = ProfileActivity.this.getContentResolver();
         MimeTypeMap mine = MimeTypeMap.getSingleton();
         return mine.getExtensionFromMimeType(cr.getType(url));
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.clear();
     }
 }
