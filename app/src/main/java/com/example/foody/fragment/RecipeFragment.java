@@ -245,6 +245,7 @@ public class RecipeFragment extends Fragment  {
                 recipe.title = snapshot.child("Title").getValue().toString();
                 recipe.vegan = (boolean) snapshot.child("Vegan").getValue();
                 listRecipe.add(recipe);
+                listRecipeFilter.add(recipe);
                 listRecipeAdapter.notifyItemInserted(listRecipe.size()-1);
             }
 
