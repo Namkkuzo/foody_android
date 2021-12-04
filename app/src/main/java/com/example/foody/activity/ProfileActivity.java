@@ -109,13 +109,13 @@ public class ProfileActivity extends AppCompatActivity {
             ProfileActivity.this.startActivityForResult(Intent.createChooser(intent, "Chọn Ảnh"), SELECT_IMAGE_CODE);
         });
 
-        imageUser.setOnClickListener(view -> {
-
-            Intent detail = new Intent(ProfileActivity.this, ViewImage.class);
-            detail.putExtra("imageNamePr", fileNamePr);
-            detail.putExtra("imageTypePr", fileTypePr);
-            startActivity(detail);
-        });
+//        imageUser.setOnClickListener(view -> {
+//
+//            Intent detail = new Intent(ProfileActivity.this, ViewImage.class);
+//            detail.putExtra("imageNamePr", fileNamePr);
+//            detail.putExtra("imageTypePr", fileTypePr);
+//            startActivity(detail);
+//        });
 
     }
 

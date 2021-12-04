@@ -158,24 +158,26 @@ public class OverviewFragment extends Fragment {
         tvDescription.setText(recipeDetail.getDescription());
         tvTotalTime.setText(Integer.toString(recipeDetail.getTotalTime()));
         tvTotalLike.setText(Integer.toString(recipeDetail.getTotalLike()));
-        if(recipeDetail.isLiked()){
-            iconLike.setImageResource(R.drawable.ic_baseline_favorite_24);
-        }
-        else {
-            iconLike.setImageResource(R.drawable.ic_no_favorite);
-        }
-        iconLike.setOnClickListener(view1 -> {
-            if (!recipeDetail.isLiked()){
-                DatabaseReference mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference().child("RecipeDetail").child(recipeDetail.getRecipeId());
-                mReference.child("PeopleLike").child(userId).setValue(userId);
-                mReference.child("Like").setValue(recipeDetail.getTotalLike()+1);
-            }
-            else {
-                DatabaseReference mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference().child("RecipeDetail").child(recipeDetail.getRecipeId());
-                mReference.child("PeopleLike").child(userId).removeValue();
-                mReference.child("Like").setValue(recipeDetail.getTotalLike()-1);
-            }
-        });
+        ////like
+//        if(recipeDetail.isLiked()){
+//            iconLike.setImageResource(R.drawable.ic_baseline_favorite_24);
+//        }
+//        else {
+//            iconLike.setImageResource(R.drawable.ic_no_favorite);
+//        }
+//        iconLike.setOnClickListener(view1 -> {
+//
+//            if (!recipeDetail.isLiked()){
+//                DatabaseReference mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference().child("RecipeDetail").child(recipeDetail.getRecipeId());
+//                mReference.child("PeopleLike").child(userId).setValue(userId);
+//                mReference.child("Like").setValue(recipeDetail.getTotalLike()+1);
+//            }
+//            else {
+//                DatabaseReference mReference = FirebaseDatabase.getInstance(Contain.REALTIME_DATABASE).getReference().child("RecipeDetail").child(recipeDetail.getRecipeId());
+//                mReference.child("PeopleLike").child(userId).removeValue();
+//                mReference.child("Like").setValue(recipeDetail.getTotalLike()-1);
+//            }
+//        });
 
     }
 

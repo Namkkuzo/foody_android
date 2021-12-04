@@ -270,7 +270,7 @@ public class RecipeFragment extends Fragment  {
                 for (int i = 0;i<listRecipe.size();i++){
                     if (listRecipe.get(i).id == recipe.id){
                         listRecipe.set(i,recipe);
-                        listRecipeAdapter.notifyItemChanged(i);
+//                        listRecipeAdapter.notifyItemChanged(i); -- reload list when data change
                     }
                 }
             }
