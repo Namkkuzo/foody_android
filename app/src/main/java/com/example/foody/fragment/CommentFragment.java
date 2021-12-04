@@ -134,6 +134,7 @@ public class CommentFragment extends Fragment {
         camera.setOnClickListener(view -> {
             Intent intent = new Intent();
             intent.setType("image/*");
+//            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true); // multiple image
             intent.setAction(Intent.ACTION_GET_CONTENT);
             CommentFragment.this.startActivityForResult(Intent.createChooser(intent,"Chọn Ảnh"),SELECT_IMAGE_CODE);
         });
@@ -183,6 +184,24 @@ public class CommentFragment extends Fragment {
             canSend = true;
             showImage = true;
         }
+
+        // multiple image
+         String imagePath;
+         List<Uri>  imagePathList = new ArrayList<>();
+        if (data.getClipData() != null) {
+
+            int count = data.getClipData().getItemCount();
+            for (int i=0; i<count; i++) {
+                Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                imagePathList.add(imageUri);
+            }
+        }
+        else if (data.getData() != null) {
+            Uri imgUri = data.getData();
+            //getImageFilePath(imgUri);
+        }
+
+
     }
 
 
