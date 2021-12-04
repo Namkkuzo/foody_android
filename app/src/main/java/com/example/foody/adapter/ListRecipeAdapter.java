@@ -120,7 +120,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
 
 
 
-        if (recipe.liked) {
+        if (recipe.liked == null || recipe.liked) {
             holder.iconLike.setImageResource(R.drawable.ic_baseline_favorite_24);
         } else {
             holder.iconLike.setImageResource(R.drawable.ic_no_favorite);
