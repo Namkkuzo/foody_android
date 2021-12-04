@@ -229,6 +229,7 @@ public class RecipeFragment extends Fragment  {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Recipe recipe = new Recipe();
                 recipe.id = snapshot.child("Id").getValue().toString();
+                recipe.totalTime = Integer.parseInt(snapshot.child("TotalTime").getValue().toString());
                 recipe.liked = false;
                 try{
                     if (!snapshot.child("PeopleLike").child(user.id).getValue().toString().equals("")){
@@ -240,7 +241,7 @@ public class RecipeFragment extends Fragment  {
                 recipe.imageName = snapshot.child("ImageName").getValue().toString();
                 recipe.imageType = snapshot.child("ImageType").getValue().toString();
                 recipe.totalLike = Integer.parseInt(snapshot.child("Like").getValue().toString());
-                recipe.totalTime = Integer.parseInt(snapshot.child("TotalTime").getValue().toString());
+
                 recipe.summary = snapshot.child("Summary").getValue().toString();
                 recipe.title = snapshot.child("Title").getValue().toString();
                 recipe.vegan = (boolean) snapshot.child("Vegan").getValue();
@@ -253,6 +254,7 @@ public class RecipeFragment extends Fragment  {
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Recipe recipe = new Recipe();
                 recipe.id = snapshot.child("Id").getValue().toString();
+                recipe.totalTime = Integer.parseInt(snapshot.child("TotalTime").getValue().toString());
                 recipe.liked = false;
                 try{
                     if (!snapshot.child("PeopleLike").child(user.id).getValue().toString().equals("")){
@@ -264,7 +266,7 @@ public class RecipeFragment extends Fragment  {
                 recipe.imageName = snapshot.child("ImageName").getValue().toString();
                 recipe.imageType = snapshot.child("ImageType").getValue().toString();
                 recipe.totalLike = Integer.parseInt(snapshot.child("Like").getValue().toString());
-                recipe.totalTime = Integer.parseInt(snapshot.child("TotalTime").getValue().toString());
+
                 recipe.summary = snapshot.child("Summary").getValue().toString();
                 recipe.title = snapshot.child("Title").getValue().toString();
                 recipe.vegan = (boolean) snapshot.child("Vegan").getValue();

@@ -112,6 +112,7 @@ public class ListRecipeAdapter extends RecyclerView.Adapter<ListRecipeAdapter.Vi
             holder.layout.setBackgroundColor(Color.parseColor("#ffffff"));
         }
 
+        holder.time.setText(Integer.toString(recipe.totalTime));
 
         holder.title.setText(recipe.title);
         holder.summary.setText(recipe.summary);
